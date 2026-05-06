@@ -1,14 +1,11 @@
 {
-  "task_id": "T-test-4",
-  "key": "graduate-tests",
-  "title": "Graduate Test Scripts",
-  "priority": "P1",
+  "task_id": "disc-1",
+  "key": "disc-1",
+  "title": "Fix e2e: TC-013/014 filter dropdown + TC-022 overlay interception",
+  "priority": "P0",
   "estimatedTime": "30min",
-  "dependencies": [
-    "T-test-3"
-  ],
-  "file": "graduate-tests.md",
-  "record": "records/graduate-tests.md",
-  "startedTime": "2026-05-07 03:04",
-  "scope": "all"
+  "file": "disc-1.md",
+  "record": "records/disc-1.md",
+  "startedTime": "2026-05-07 03:06",
+  "breaking": true
 }

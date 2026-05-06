@@ -260,7 +260,9 @@ test.describe('UI E2E Tests — agent-task-dashboard', () => {
       const hasBlocked = await visibleRows.nth(i).getAttribute('data-has-blocked');
       expect(hasBlocked).toBe('true');
     }
-    // Clear the filter by unchecking
+    // Clear the filter by reopening dropdown and unchecking
+    await statusBtn.click();
+    await expect(dropdown).toBeVisible();
     await blockedCheckbox.uncheck();
     await page.waitForTimeout(300);
     await screenshot(page, 'TC-013');
@@ -291,7 +293,9 @@ test.describe('UI E2E Tests — agent-task-dashboard', () => {
       const p0Count = await p0Cards.count();
       expect(p0Count).toBeGreaterThanOrEqual(1);
     }
-    // Clear the filter
+    // Clear the filter by reopening dropdown and unchecking
+    await priorityBtn.click();
+    await expect(dropdown).toBeVisible();
     await p0Checkbox.uncheck();
     await page.waitForTimeout(300);
     await screenshot(page, 'TC-014');
@@ -506,6 +510,14 @@ test.describe('UI E2E Tests — agent-task-dashboard', () => {
           expect(true).toBe(true);
         }
         break;
+      }
+      // Close the detail panel before clicking the next task card
+      // to prevent the overlay from intercepting pointer events
+      const panel = page.locator('#detail-panel');
+      const panelVisible = await panel.isVisible().catch(() => false);
+      if (panelVisible) {
+        await page.keyboard.press('Escape');
+        await page.waitForTimeout(300);
       }
     }
     await screenshot(page, 'TC-022');
