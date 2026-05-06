@@ -1,14 +1,15 @@
 {
-  "task_id": "2.3",
-  "key": "2.3-page-handlers",
-  "title": "Page Handlers and HTML Templates",
+  "task_id": "2.4",
+  "key": "2.4-entry-point",
+  "title": "Entry Point and Static Asset Embedding",
   "priority": "P0",
-  "estimatedTime": "2h",
+  "estimatedTime": "1h",
   "dependencies": [
-    "1.gate"
+    "2.2",
+    "2.3"
   ],
-  "file": "2.3-page-handlers.md",
-  "record": "records/2.3-page-handlers.md",
-  "startedTime": "2026-05-07 01:33",
+  "file": "2.4-entry-point.md",
+  "record": "records/2.4-entry-point.md",
+  "startedTime": "2026-05-07 01:40",
   "scope": "all"
 }

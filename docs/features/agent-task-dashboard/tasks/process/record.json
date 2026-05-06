@@ -1,41 +1,34 @@
 {
-  "taskId": "2.3",
-  "status": "completed",
-  "summary": "Implemented server-side HTML rendering with Go templates for landing page and project swimlane page. Created page.go with RegisterPages, handleLanding, and handleProject handlers. Created three HTML templates (landing.html, swimlane.html, error.html) with proper html/template auto-escaping for XSS protection. Templates embed JSON data in script tags for client-side JS consumption.",
-  "filesCreated": [
-    "internal/handler/page.go",
-    "internal/handler/page_test.go",
-    "web/templates/landing.html",
-    "web/templates/swimlane.html",
-    "web/templates/error.html",
-    "web/static/js/landing.js",
-    "web/static/js/swimlane.js",
-    "web/static/js/detail-panel.js",
-    "web/static/js/activity.js",
-    "web/static/js/dagre.min.js"
-  ],
-  "filesModified": [],
-  "keyDecisions": [
-    "[2.3] Templates loaded from embedded filesystem via go:embed using ParseFS with named template definitions ({{define \"landing.html\"}})",
-    "[2.3] toJson template function added via template.FuncMap to serialize data as template.JS for safe embedding in script tags",
-    "[2.3] RegisterPages sets HTML template on Gin engine via r.SetHTMLTemplate() so all page routes share the same template set",
-    "[2.3] Error page rendered for non-existent projects with 404 status code and HTML content type (not JSON)",
-    "[2.3] Removed old placeholder.html template replaced by actual landing.html, swimlane.html, and error.html templates",
-    "[2.3] Created placeholder JS files (landing.js, swimlane.js, detail-panel.js, activity.js, dagre.min.js) for future JS implementation"
-  ],
-  "testsPassed": 66,
-  "testsFailed": 0,
-  "coverage": 91.5,
-  "acceptanceCriteria": [
-    { "criterion": "internal/handler/page.go implements RegisterPages(r *gin.Engine, scanner *Scanner)", "met": true },
-    { "criterion": "GET / renders web/templates/landing.html with project cards data", "met": true },
-    { "criterion": "GET /projects/:id renders web/templates/swimlane.html with feature and task data", "met": true },
-    { "criterion": "web/templates/landing.html contains: page skeleton, container for project cards, embedded CSS link, embedded JS", "met": true },
-    { "criterion": "web/templates/swimlane.html contains: page skeleton, SVG container for DAG, detail panel placeholder, activity sidebar placeholder", "met": true },
-    { "criterion": "Templates use html/template auto-escaping (XSS protection)", "met": true },
-    { "criterion": "404 page rendered for non-existent project IDs", "met": true },
-    { "criterion": "Integration tests: landing page returns 200 with project names, project page returns 200 with feature data, invalid project returns 404", "met": true },
-    { "criterion": "All tests pass", "met": true }
-  ],
-  "notes": "21 new page handler tests added. Total handler package tests: 66 (42 middleware + 3 API + 21 page). Handler coverage: 91.5%. All 128 tests across the full project pass."
+	"taskId": "2.4",
+	"status": "completed",
+	"summary": "Implemented entry point in cmd/task-dashboard/main.go with full startup sequence: CLI flags (--config, --port), config loading, scanner creation, Gin engine setup with page/API routes and validation middleware, embedded static assets via go:embed with fs.Sub for /static/ prefix, templates from embedded web/templates, server binding to 127.0.0.1 only, and graceful shutdown on SIGINT/SIGTERM. Extracted testable setupRouter and defaultConfigPath functions. Binary builds as single executable and serves HTML landing page, static JS/CSS, and JSON API.",
+	"filesCreated": ["cmd/task-dashboard/main_test.go"],
+	"filesModified": ["cmd/task-dashboard/main.go"],
+	"keyDecisions": [
+		"Extracted setupRouter() from main() for testability - router setup is fully unit-testable without signal handling",
+		"Used fs.Sub(web.Assets, 'static') to serve only static/ subdirectory, preventing template leakage via /static/",
+		"Server binds to 127.0.0.1 only (not 0.0.0.0) for security - localhost-only access",
+		"Gin ReleaseMode set by default for production; uses gin.New() with Recovery() middleware",
+		"net.Listen explicitly in goroutine before srv.Serve to ensure port is available before signal wait",
+		"Graceful shutdown with 5-second timeout using context.WithTimeout",
+		"CLI --port flag overrides config file port; --config flag overrides default ~/.task-dashboard.yaml path"
+	],
+	"testsPassed": 13,
+	"testsFailed": 0,
+	"coverage": 27.9,
+	"acceptanceCriteria": [
+		{ "criterion": "cmd/task-dashboard/main.go implements full startup sequence", "met": true },
+		{ "criterion": "Config loaded from ~/.task-dashboard.yaml or --config CLI flag", "met": true },
+		{ "criterion": "Port configurable via config or --port CLI flag (default 8080)", "met": true },
+		{ "criterion": "Scanner created with config", "met": true },
+		{ "criterion": "Gin engine created with page handlers, API handlers, validation middleware", "met": true },
+		{ "criterion": "Static assets served from embedded web/static/ via go:embed", "met": true },
+		{ "criterion": "Templates loaded from embedded web/templates/ via go:embed", "met": true },
+		{ "criterion": "Server binds to 127.0.0.1 only (not 0.0.0.0)", "met": true },
+		{ "criterion": "Graceful shutdown on SIGINT/SIGTERM", "met": true },
+		{ "criterion": "go build -o task-dashboard ./cmd/task-dashboard/ produces single binary", "met": true },
+		{ "criterion": "Binary starts and responds to GET / with HTML", "met": true },
+		{ "criterion": "Binary serves embedded static JS/CSS files", "met": true }
+	],
+	"notes": "Coverage for cmd/task-dashboard is 27.9% because main() and runServer() involve os/signal blocking and log.Fatalf which cannot be unit-tested in-process. The testable functions (setupRouter, defaultConfigPath) are fully covered. Integration test confirmed binary starts, responds to GET / with HTML, serves static JS/CSS, and handles /api/projects. All 13 unit tests verify router setup, static file serving, template rendering, graceful shutdown, localhost binding, and embedded asset availability."
 }
