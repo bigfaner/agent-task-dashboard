@@ -1,23 +1,30 @@
 {
-	"taskId": "T-test-1",
-	"status": "completed",
-	"summary": "Generated structured e2e test case documentation from PRD acceptance criteria. Created testing/test-cases.md with 37 test cases: 24 UI (including 2 integration), 11 API, 0 CLI. All test cases traceable to PRD sources with Target and Test ID fields. Route validation performed against discovered Gin routes. Interfaces detected: UI + API (web application, no CLI).",
-	"filesCreated": ["docs/features/agent-task-dashboard/testing/test-cases.md"],
-	"filesModified": [],
-	"keyDecisions": [
-		"Detected interfaces as UI + API only (web application with pages and REST endpoints, no CLI binary)",
-		"Grouped test cases by type: UI first (landing page, swimlane, detail panel, activity sidebar, integration), then API",
-		"Generated 2 integration test cases for existing-page placements: UF-3 Detail Panel and UF-4 Activity Sidebar on Swimlane Page",
-		"Route validation cross-referenced all 9 routes against Gin route registrations in internal/handler/page.go and api.go"
-	],
-	"testsPassed": 0,
-	"testsFailed": 0,
-	"coverage": -1.0,
-	"acceptanceCriteria": [
-		{ "criterion": "testing/test-cases.md file created", "met": true },
-		{ "criterion": "Each test case includes Target and Test ID fields", "met": true },
-		{ "criterion": "All test cases traceable to PRD acceptance criteria", "met": true },
-		{ "criterion": "Test cases grouped by type (UI -> API)", "met": true }
-	],
-	"notes": "Documentation-only task. No code changes or tests. 37 test cases covering 7 user stories, 5 UI functions, and 7 API endpoints."
+  "taskId": "T-test-2",
+  "status": "completed",
+  "summary": "Generated TypeScript e2e test scripts from test cases. Created ui.spec.ts (27 tests covering TC-001 to TC-027: landing page, swimlane view, detail panel, activity sidebar, integration) and api.spec.ts (11 tests covering TC-028 to TC-038: all API endpoints and error responses). Set up shared infrastructure: helpers.ts, package.json, tsconfig.json, playwright.config.ts, config.yaml. All files pass TypeScript compilation (tsc --noEmit). No unresolved VERIFY markers. All 38 traceability comments present.",
+  "filesCreated": [
+    "tests/e2e/helpers.ts",
+    "tests/e2e/package.json",
+    "tests/e2e/tsconfig.json",
+    "tests/e2e/playwright.config.ts",
+    "tests/e2e/config.yaml",
+    "tests/e2e/features/agent-task-dashboard/ui.spec.ts",
+    "tests/e2e/features/agent-task-dashboard/api.spec.ts"
+  ],
+  "filesModified": [],
+  "keyDecisions": [
+    "Used locators derived from HTML templates and JS source code instead of sitemap.json (not generated yet)",
+    "All tests classified as public-test (no auth required by the dashboard)",
+    "config.yaml points both baseUrl and apiBaseUrl to localhost:8080 (same server serves pages and API)",
+    "API tests derive project IDs dynamically by first calling GET /api/projects rather than hardcoding"
+  ],
+  "testsPassed": 0,
+  "testsFailed": 0,
+  "coverage": -1.0,
+  "acceptanceCriteria": [
+    { "criterion": "tests/e2e/features/agent-task-dashboard/ contains at least one spec file (ui.spec.ts / api.spec.ts)", "met": true },
+    { "criterion": "tests/e2e/helpers.ts exists (shared infrastructure)", "met": true },
+    { "criterion": "Each test() includes traceability comment // Traceability: TC-NNN", "met": true }
+  ],
+  "notes": "This is a test generation task, not implementation. Go tests pass at 88.8% coverage. TypeScript compilation verified with tsc --noEmit. No CLI spec generated (0 CLI test cases)."
 }
