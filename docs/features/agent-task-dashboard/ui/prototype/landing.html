@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Landing — Agent Task Dashboard</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="header">
+    <h3>Task Dashboard</h3>
+    <button class="btn btn-ghost btn-icon" id="darkModeToggle" aria-label="Toggle dark mode">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+    </button>
+  </div>
+
+  <main style="padding: 32px 24px; max-width: 1200px; margin: 0 auto;">
+
+    <!-- Loading state (hidden by default, shown via JS toggle) -->
+    <div id="loadingState" style="display:none;">
+      <div class="project-grid">
+        <div class="skeleton" style="height:192px;"></div>
+        <div class="skeleton" style="height:192px;"></div>
+        <div class="skeleton" style="height:192px;"></div>
+        <div class="skeleton" style="height:192px;"></div>
+        <div class="skeleton" style="height:192px;"></div>
+        <div class="skeleton" style="height:192px;"></div>
+      </div>
+    </div>
+
+    <!-- Error state (warning banner example) -->
+    <div id="errorBanner" style="display:none;">
+      <div class="warning-banner">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--destructive)" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+        <span class="text-sm">Path not found: <strong>missing-project</strong></span>
+        <span class="text-sm font-mono text-muted" style="cursor:pointer;" title="Click to copy" onclick="navigator.clipboard?.writeText('/invalid/path')">/invalid/path/to/project</span>
+      </div>
+    </div>
+
+    <!-- Empty state (hidden by default) -->
+    <div id="emptyState" style="display:none;">
+      <div class="empty-state">
+        <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></svg>
+        <h4>No projects configured</h4>
+        <p>Add projects to ~/.task-dashboard.yaml</p>
+      </div>
+    </div>
+
+    <!-- Populated state -->
+    <div id="populatedState">
+      <div class="project-grid">
+
+        <!-- Card 1: Active, high completion -->
+        <a href="swimlane.html" class="card card-clickable" style="text-decoration:none;">
+          <div class="project-card-top">
+            <h4 class="font-semibold">pm-work-tracker</h4>
+            <span class="badge badge-green"><span class="status-dot status-dot-completed" style="width:6px;height:6px;"></span> active</span>
+          </div>
+          <div class="project-card-stats">
+            <span><span class="label">24 features</span></span>
+            <span>312 / 330 tasks</span>
+          </div>
+          <div class="progress-track">
+            <div class="progress-fill progress-fill-high" style="width: 94.5%;"></div>
+          </div>
+          <div class="project-card-updated">Updated 2h ago</div>
+        </a>
+
+        <!-- Card 2: Active, low completion -->
+        <a href="swimlane.html" class="card card-clickable" style="text-decoration:none;">
+          <div class="project-card-top">
+            <h4 class="font-semibold">forge</h4>
+            <span class="badge badge-green"><span class="status-dot status-dot-completed" style="width:6px;height:6px;"></span> active</span>
+          </div>
+          <div class="project-card-stats">
+            <span><span class="label">8 features</span></span>
+            <span>45 / 92 tasks</span>
+          </div>
+          <div class="progress-track">
+            <div class="progress-fill" style="width: 48.9%;"></div>
+          </div>
+          <div class="project-card-updated">Updated 5h ago</div>
+        </a>
+
+        <!-- Card 3: All complete -->
+        <a href="swimlane.html" class="card card-clickable" style="text-decoration:none;">
+          <div class="project-card-top">
+            <h4 class="font-semibold">auth-service</h4>
+            <span class="badge badge-blue"><span class="status-dot" style="width:6px;height:6px;background:#2563eb;"></span> complete</span>
+          </div>
+          <div class="project-card-stats">
+            <span><span class="label">5 features</span></span>
+            <span>67 / 67 tasks</span>
+          </div>
+          <div class="progress-track">
+            <div class="progress-fill progress-fill-high" style="width: 100%;"></div>
+          </div>
+          <div class="project-card-updated">Updated 3d ago</div>
+        </a>
+
+        <!-- Card 4: Stale -->
+        <a href="swimlane.html" class="card card-clickable" style="text-decoration:none;">
+          <div class="project-card-top">
+            <h4 class="font-semibold">legacy-importer</h4>
+            <span class="badge badge-grey"><span class="status-dot status-dot-pending" style="width:6px;height:6px;"></span> stale</span>
+          </div>
+          <div class="project-card-stats">
+            <span><span class="label">3 features</span></span>
+            <span>12 / 28 tasks</span>
+          </div>
+          <div class="progress-track">
+            <div class="progress-fill" style="width: 42.9%;"></div>
+          </div>
+          <div class="project-card-updated">Updated 14d ago</div>
+        </a>
+
+      </div>
+    </div>
+
+  </main>
+
+  <!-- State toggle for demo -->
+  <div style="position:fixed;bottom:16px;left:16px;background:var(--card);border:1px solid var(--border);border-radius:8px;padding:12px;z-index:50;font-size:0.75rem;">
+    <div style="font-weight:600;margin-bottom:8px;">Toggle States</div>
+    <div style="display:flex;gap:4px;flex-wrap:wrap;">
+      <button class="btn btn-outline" style="height:28px;font-size:0.75rem;" onclick="showState('populated')">Populated</button>
+      <button class="btn btn-outline" style="height:28px;font-size:0.75rem;" onclick="showState('loading')">Loading</button>
+      <button class="btn btn-outline" style="height:28px;font-size:0.75rem;" onclick="showState('empty')">Empty</button>
+      <button class="btn btn-outline" style="height:28px;font-size:0.75rem;" onclick="showState('error')">Error</button>
+    </div>
+  </div>
+
+  <script src="app.js"></script>
+  <script>
+    function showState(state) {
+      document.getElementById('loadingState').style.display = state === 'loading' ? 'block' : 'none';
+      document.getElementById('emptyState').style.display = state === 'empty' ? 'block' : 'none';
+      document.getElementById('errorBanner').style.display = state === 'error' ? 'block' : 'none';
+      document.getElementById('populatedState').style.display = state === 'populated' ? 'block' : 'none';
+      // Error shows both banner and populated cards
+      if (state === 'error') {
+        document.getElementById('populatedState').style.display = 'block';
+      }
+    }
+  </script>
+</body>
+</html>

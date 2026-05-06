@@ -1,0 +1,5 @@
+[
+  {"phase": 1, "name": "Foundation — models, config, scanner, errors", "source": "fallback", "gates": [{"afterPhase": 1, "description": "Verify all data models compile, config loads correctly, scanner reads index.json"}]},
+  {"phase": 2, "name": "Backend — markdown parser, API handlers, page handlers, entry point", "source": "fallback", "gates": [{"afterPhase": 2, "description": "Verify all API endpoints respond correctly, page handlers render HTML"}]},
+  {"phase": 3, "name": "Frontend — CSS, templates, swimlane DAG, detail panel, activity sidebar", "source": "fallback", "gates": [{"afterPhase": 3, "description": "Verify swimlane renders with test data, all UI interactions work"}]}
+]

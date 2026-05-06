@@ -1,0 +1,425 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>pm-work-tracker — Agent Task Dashboard</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <!-- Header -->
+  <div class="header">
+    <div class="breadcrumb">
+      <a href="landing.html">Dashboard</a>
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
+      <span>pm-work-tracker</span>
+    </div>
+    <div class="flex items-center gap-2">
+      <button class="btn btn-ghost btn-icon-sm" aria-label="Refresh data">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
+      </button>
+      <div class="filter-bar">
+        <!-- Status filter -->
+        <div class="filter-dropdown">
+          <button class="filter-btn">Status <span class="filter-count" style="display:none;">0</span></button>
+          <div class="filter-popup">
+            <label class="filter-option"><input type="checkbox" name="statusFilter" value="pending"> Pending</label>
+            <label class="filter-option"><input type="checkbox" name="statusFilter" value="in_progress"> In Progress</label>
+            <label class="filter-option"><input type="checkbox" name="statusFilter" value="completed"> Completed</label>
+            <label class="filter-option"><input type="checkbox" name="statusFilter" value="blocked"> Blocked</label>
+            <label class="filter-option"><input type="checkbox" name="statusFilter" value="skipped"> Skipped</label>
+          </div>
+        </div>
+        <!-- Priority filter -->
+        <div class="filter-dropdown">
+          <button class="filter-btn">Priority <span class="filter-count" style="display:none;">0</span></button>
+          <div class="filter-popup">
+            <label class="filter-option"><input type="checkbox" name="priorityFilter" value="P0"> P0</label>
+            <label class="filter-option"><input type="checkbox" name="priorityFilter" value="P1"> P1</label>
+            <label class="filter-option"><input type="checkbox" name="priorityFilter" value="P2"> P2</label>
+          </div>
+        </div>
+      </div>
+      <button class="btn btn-ghost btn-icon" id="darkModeToggle" aria-label="Toggle dark mode">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+      </button>
+    </div>
+  </div>
+
+  <!-- Narrow viewport warning -->
+  <div class="viewport-warning">
+    <p>This dashboard requires a wider screen (minimum 768px).</p>
+  </div>
+
+  <!-- Main layout -->
+  <div class="swimlane-page">
+
+    <!-- Swimlane area (UF-2) -->
+    <div class="swimlane-area" id="swimlaneArea">
+      <!-- Phase header row -->
+      <div class="phase-header">
+        <div class="phase-header-label">Feature</div>
+        <div class="phase-header-cell">Phase 1</div>
+        <div class="phase-header-cell">Phase 2</div>
+        <div class="phase-header-cell">Phase 3+</div>
+        <div class="phase-header-cell">Testing</div>
+        <div class="phase-header-cell">Other</div>
+      </div>
+
+      <!-- Feature row 1: rbac-permissions (blocked task visible) -->
+      <div class="feature-row" data-feature="rbac-permissions">
+        <div class="feature-row-header" aria-label="Expand feature rbac-permissions">
+          <svg class="chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="transition:transform 200ms;"><polyline points="6 9 12 15 18 9"/></svg>
+          <span class="feature-slug">rbac-permissions</span>
+          <span class="feature-completion">40% (4/10)</span>
+        </div>
+        <div class="feature-task-area">
+          <div class="spacer"></div>
+          <div class="feature-task-cell">
+            <div class="task-card" data-task-id="1.1" data-status="completed" data-priority="P0" tabindex="0">
+              <div class="task-card-top">
+                <span class="task-card-id">1.1</span>
+                <span class="badge badge-destructive" style="font-size:0.6875rem;">P0</span>
+              </div>
+              <div class="task-card-title">Set up project scaffolding</div>
+              <div class="task-card-status">
+                <span class="status-dot status-dot-completed"></span>
+                <span class="status-text-completed">completed</span>
+              </div>
+            </div>
+          </div>
+          <div class="feature-task-cell">
+            <div class="task-card" data-task-id="2.1" data-status="in_progress" data-priority="P0" tabindex="0">
+              <div class="task-card-top">
+                <span class="task-card-id">2.1</span>
+                <span class="badge badge-destructive" style="font-size:0.6875rem;">P0</span>
+              </div>
+              <div class="task-card-title">Implement filesystem scanner</div>
+              <div class="task-card-status">
+                <span class="status-dot status-dot-in-progress"></span>
+                <span class="status-text-in-progress">in_progress</span>
+              </div>
+            </div>
+          </div>
+          <div class="feature-task-cell">
+            <div class="task-card" data-task-id="3.1" data-status="blocked" data-priority="P0" tabindex="0">
+              <div class="task-card-top">
+                <span class="task-card-id">3.1</span>
+                <span class="badge badge-destructive" style="font-size:0.6875rem;">P0</span>
+              </div>
+              <div class="task-card-title">Implement swimlane renderer</div>
+              <div class="task-card-status">
+                <span class="status-dot status-dot-blocked"></span>
+                <span class="status-text-blocked">blocked</span>
+              </div>
+            </div>
+          </div>
+          <div class="feature-task-cell">
+            <div class="task-card" data-task-id="T-1" data-status="pending" data-priority="P1" tabindex="0">
+              <div class="task-card-top">
+                <span class="task-card-id">T-1</span>
+                <span class="badge badge-secondary" style="font-size:0.6875rem;">P1</span>
+              </div>
+              <div class="task-card-title">Integration test for scanner</div>
+              <div class="task-card-status">
+                <span class="status-dot status-dot-pending"></span>
+                <span class="status-text-pending">pending</span>
+              </div>
+            </div>
+          </div>
+          <div class="feature-task-cell"><!-- Other: empty --></div>
+        </div>
+      </div>
+
+      <!-- Feature row 2: user-profile -->
+      <div class="feature-row" data-feature="user-profile">
+        <div class="feature-row-header" aria-label="Expand feature user-profile">
+          <svg class="chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="transition:transform 200ms;"><polyline points="6 9 12 15 18 9"/></svg>
+          <span class="feature-slug">user-profile</span>
+          <span class="feature-completion">66% (2/3)</span>
+        </div>
+        <div class="feature-task-area">
+          <div class="spacer"></div>
+          <div class="feature-task-cell">
+            <div class="task-card" data-task-id="1.2" data-status="completed" data-priority="P0" tabindex="0">
+              <div class="task-card-top">
+                <span class="task-card-id">1.2</span>
+                <span class="badge badge-destructive" style="font-size:0.6875rem;">P0</span>
+              </div>
+              <div class="task-card-title">Implement config file parser</div>
+              <div class="task-card-status">
+                <span class="status-dot status-dot-completed"></span>
+                <span class="status-text-completed">completed</span>
+              </div>
+            </div>
+          </div>
+          <div class="feature-task-cell">
+            <div class="task-card" data-task-id="2.2" data-status="pending" data-priority="P1" tabindex="0">
+              <div class="task-card-top">
+                <span class="task-card-id">2.2</span>
+                <span class="badge badge-secondary" style="font-size:0.6875rem;">P1</span>
+              </div>
+              <div class="task-card-title">Build landing page handler</div>
+              <div class="task-card-status">
+                <span class="status-dot status-dot-pending"></span>
+                <span class="status-text-pending">pending</span>
+              </div>
+            </div>
+          </div>
+          <div class="feature-task-cell"><!-- Phase 3+: empty --></div>
+          <div class="feature-task-cell"><!-- Testing: empty --></div>
+          <div class="feature-task-cell"><!-- Other: empty --></div>
+        </div>
+      </div>
+
+      <!-- Feature row 3: code-quality -->
+      <div class="feature-row" data-feature="code-quality">
+        <div class="feature-row-header" aria-label="Expand feature code-quality">
+          <svg class="chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="transition:transform 200ms;"><polyline points="6 9 12 15 18 9"/></svg>
+          <span class="feature-slug">code-quality</span>
+          <span class="feature-completion">100% (4/4)</span>
+        </div>
+        <div class="feature-task-area">
+          <div class="spacer"></div>
+          <div class="feature-task-cell">
+            <div class="task-card" data-task-id="1.3" data-status="completed" data-priority="P1" tabindex="0">
+              <div class="task-card-top">
+                <span class="task-card-id">1.3</span>
+                <span class="badge badge-secondary" style="font-size:0.6875rem;">P1</span>
+              </div>
+              <div class="task-card-title">Lint configuration setup</div>
+              <div class="task-card-status">
+                <span class="status-dot status-dot-completed"></span>
+                <span class="status-text-completed">completed</span>
+              </div>
+            </div>
+          </div>
+          <div class="feature-task-cell">
+            <div class="task-card" data-task-id="2.3" data-status="completed" data-priority="P2" tabindex="0">
+              <div class="task-card-top">
+                <span class="task-card-id">2.3</span>
+                <span class="badge badge-outline" style="font-size:0.6875rem;">P2</span>
+              </div>
+              <div class="task-card-title">CI pipeline integration</div>
+              <div class="task-card-status">
+                <span class="status-dot status-dot-completed"></span>
+                <span class="status-text-completed">completed</span>
+              </div>
+            </div>
+          </div>
+          <div class="feature-task-cell">
+            <div class="task-card" data-task-id="3.2" data-status="completed" data-priority="P1" tabindex="0">
+              <div class="task-card-top">
+                <span class="task-card-id">3.2</span>
+                <span class="badge badge-secondary" style="font-size:0.6875rem;">P1</span>
+              </div>
+              <div class="task-card-title">Static analysis config</div>
+              <div class="task-card-status">
+                <span class="status-dot status-dot-completed"></span>
+                <span class="status-text-completed">completed</span>
+              </div>
+            </div>
+          </div>
+          <div class="feature-task-cell">
+            <div class="task-card" data-task-id="T-2" data-status="completed" data-priority="P1" tabindex="0">
+              <div class="task-card-top">
+                <span class="task-card-id">T-2</span>
+                <span class="badge badge-secondary" style="font-size:0.6875rem;">P1</span>
+              </div>
+              <div class="task-card-title">Quality gate tests</div>
+              <div class="task-card-status">
+                <span class="status-dot status-dot-completed"></span>
+                <span class="status-text-completed">completed</span>
+              </div>
+            </div>
+          </div>
+          <div class="feature-task-cell"><!-- Other: empty --></div>
+        </div>
+      </div>
+
+      <!-- Feature row 4: data-export (skipped task) -->
+      <div class="feature-row" data-feature="data-export">
+        <div class="feature-row-header" aria-label="Expand feature data-export">
+          <svg class="chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="transition:transform 200ms;"><polyline points="6 9 12 15 18 9"/></svg>
+          <span class="feature-slug">data-export</span>
+          <span class="feature-completion">50% (1/2)</span>
+        </div>
+        <div class="feature-task-area">
+          <div class="spacer"></div>
+          <div class="feature-task-cell">
+            <div class="task-card" data-task-id="1.4" data-status="completed" data-priority="P1" tabindex="0">
+              <div class="task-card-top">
+                <span class="task-card-id">1.4</span>
+                <span class="badge badge-secondary" style="font-size:0.6875rem;">P1</span>
+              </div>
+              <div class="task-card-title">CSV export endpoint</div>
+              <div class="task-card-status">
+                <span class="status-dot status-dot-completed"></span>
+                <span class="status-text-completed">completed</span>
+              </div>
+            </div>
+          </div>
+          <div class="feature-task-cell">
+            <div class="task-card" data-task-id="2.4" data-status="skipped" data-priority="P2" tabindex="0">
+              <div class="task-card-top">
+                <span class="task-card-id">2.4</span>
+                <span class="badge badge-outline" style="font-size:0.6875rem;">P2</span>
+              </div>
+              <div class="task-card-title">PDF export (legacy format)</div>
+              <div class="task-card-status">
+                <span class="status-dot status-dot-skipped"></span>
+                <span class="status-text-skipped">skipped</span>
+              </div>
+            </div>
+          </div>
+          <div class="feature-task-cell"><!-- empty --></div>
+          <div class="feature-task-cell"><!-- empty --></div>
+          <div class="feature-task-cell"><!-- empty --></div>
+        </div>
+      </div>
+
+    </div><!-- /swimlane-area -->
+
+    <!-- Activity sidebar (UF-4) -->
+    <div class="activity-sidebar" id="activitySidebar">
+      <!-- Expanded view -->
+      <div class="sidebar-expanded">
+        <div class="sidebar-header">
+          <span class="sidebar-title">Activity</span>
+          <button class="btn btn-ghost btn-icon-sm sidebar-collapse-btn" aria-label="Collapse activity sidebar">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"/></svg>
+          </button>
+        </div>
+        <div class="event-list">
+          <div class="event-item" data-task-id="3.1">
+            <div class="event-time">14:45</div>
+            <div class="event-task">
+              <span class="status-dot status-dot-blocked"></span>
+              <span class="event-task-id">3.1</span>
+              <span class="event-task-title">Implement swimlane renderer</span>
+            </div>
+            <div class="event-type event-type-blocked">blocked</div>
+            <div class="event-feature">rbac-permissions</div>
+          </div>
+          <div class="event-item" data-task-id="2.1">
+            <div class="event-time">14:30</div>
+            <div class="event-task">
+              <span class="status-dot status-dot-in-progress"></span>
+              <span class="event-task-id">2.1</span>
+              <span class="event-task-title">Implement filesystem scanner</span>
+            </div>
+            <div class="event-type event-type-claimed">claimed</div>
+            <div class="event-feature">rbac-permissions</div>
+          </div>
+          <div class="event-item" data-task-id="1.2">
+            <div class="event-time">13:15</div>
+            <div class="event-task">
+              <span class="status-dot status-dot-completed"></span>
+              <span class="event-task-id">1.2</span>
+              <span class="event-task-title">Implement config file parser</span>
+            </div>
+            <div class="event-type event-type-completed">completed</div>
+            <div class="event-feature">user-profile</div>
+          </div>
+          <div class="event-item" data-task-id="2.4">
+            <div class="event-time">12:50</div>
+            <div class="event-task">
+              <span class="status-dot status-dot-skipped"></span>
+              <span class="event-task-id">2.4</span>
+              <span class="event-task-title">PDF export (legacy format)</span>
+            </div>
+            <div class="event-type event-type-skipped">skipped</div>
+            <div class="event-feature">data-export</div>
+          </div>
+          <div class="event-item" data-task-id="T-2">
+            <div class="event-time">11:20</div>
+            <div class="event-task">
+              <span class="status-dot status-dot-completed"></span>
+              <span class="event-task-id">T-2</span>
+              <span class="event-task-title">Quality gate tests</span>
+            </div>
+            <div class="event-type event-type-completed">completed</div>
+            <div class="event-feature">code-quality</div>
+          </div>
+          <div class="event-item" data-task-id="1.1">
+            <div class="event-time">10:00</div>
+            <div class="event-task">
+              <span class="status-dot status-dot-completed"></span>
+              <span class="event-task-id">1.1</span>
+              <span class="event-task-title">Set up project scaffolding</span>
+            </div>
+            <div class="event-type event-type-completed">completed</div>
+            <div class="event-feature">rbac-permissions</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Collapsed view -->
+      <div class="sidebar-collapsed-view" style="display:none;">
+        <div class="sidebar-collapsed-content">
+          <button class="btn btn-ghost btn-icon-sm sidebar-expand-btn" aria-label="Expand activity sidebar">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
+          </button>
+          <div class="blocked-badge">1</div>
+        </div>
+      </div>
+    </div><!-- /activity-sidebar -->
+
+  </div><!-- /swimlane-page -->
+
+  <!-- Detail panel overlay (UF-3) -->
+  <div class="detail-overlay" id="detailOverlay"></div>
+
+  <!-- Detail panel (UF-3) -->
+  <div class="detail-panel" id="detailPanel" tabindex="-1" role="dialog" aria-modal="true">
+    <div class="detail-header">
+      <button class="btn btn-ghost btn-icon" id="closeDetail" aria-label="Close task details">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
+      <span class="font-mono text-sm text-muted" id="detailTaskId">2.1</span>
+    </div>
+    <div class="detail-content">
+      <div style="margin-bottom:16px;">
+        <h3 id="detailTitle" style="margin-bottom:8px;">Implement filesystem scanner</h3>
+        <div class="flex gap-2" style="flex-wrap:wrap;">
+          <span class="badge badge-blue"><span class="status-dot status-dot-in-progress" id="detailStatusDot" style="width:6px;height:6px;"></span> <span id="detailStatusText">in progress</span></span>
+          <span class="badge badge-destructive" id="detailPriority">P0</span>
+          <span class="badge badge-outline" id="detailScope">backend</span>
+        </div>
+      </div>
+
+      <div class="detail-section">
+        <h4>Details</h4>
+        <div class="meta-table">
+          <div class="meta-row"><span class="meta-label">Est. Time</span><span class="meta-value" id="detailEstTime">3h</span></div>
+          <div class="meta-row"><span class="meta-label">Breaking</span><span class="meta-value" id="detailBreaking">No</span></div>
+          <div class="meta-row"><span class="meta-label">Dependencies</span><span class="meta-value" id="detailDeps"><span class="chip" onclick="navigateToTask('1.2')">1.2</span></span></div>
+          <div class="meta-row"><span class="meta-label">File Path</span><span class="meta-value font-mono text-sm" id="detailFilePath">tasks/2.1-scanner.md</span></div>
+          <div class="meta-row"><span class="meta-label">Record</span><span class="meta-value font-mono text-sm" id="detailRecordPath">records/2.1-scanner.md</span></div>
+        </div>
+      </div>
+
+      <div class="detail-section">
+        <h4>Acceptance Criteria</h4>
+        <ul class="criteria-list" id="detailCriteria">
+          <li class="criteria-item"><span class="criteria-icon">&#9675;</span><span>Scans all feature directories</span></li>
+          <li class="criteria-item"><span class="criteria-icon">&#9675;</span><span>Parses index.json files</span></li>
+          <li class="criteria-item"><span class="criteria-icon">&#9675;</span><span>Returns structured data</span></li>
+        </ul>
+      </div>
+
+      <div class="detail-section">
+        <h4>Execution Record</h4>
+        <div id="detailRecord">
+          <div class="record-empty">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+            No execution record
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>

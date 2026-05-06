@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Agent Task Dashboard — Prototype Index</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="header">
+    <h3>Task Dashboard</h3>
+    <button class="btn btn-ghost btn-icon" id="darkModeToggle" aria-label="Toggle dark mode">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+    </button>
+  </div>
+
+  <div class="prototype-index">
+    <h1>Prototype Pages</h1>
+    <p>Interactive prototype for the Agent Task Dashboard. Click a page to explore.</p>
+
+    <div class="page-grid">
+      <a href="landing.html" class="page-card">
+        <h3>Landing Page</h3>
+        <p>Project card grid with health status, progress bars, and completion stats. Includes loading, empty, and error states.</p>
+        <div class="route">GET /</div>
+      </a>
+
+      <a href="swimlane.html" class="page-card">
+        <h3>Project Swimlane</h3>
+        <p>Feature-per-row swimlane with phase columns, dependency arrows, task detail panel, and activity sidebar. Includes filter controls.</p>
+        <div class="route">GET /projects/:id</div>
+      </a>
+    </div>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
