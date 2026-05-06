@@ -109,9 +109,40 @@ func TestPage_Landing_ContainsProjectData(t *testing.T) {
 		t.Error("expected body to contain project name")
 	}
 
-	// Should contain project link
-	if !strings.Contains(body, "/projects/test-project") {
-		t.Error("expected body to contain project link")
+	// Should contain data injection for JS rendering
+	if !strings.Contains(body, "__PROJECTS_DATA__") {
+		t.Error("expected body to contain __PROJECTS_DATA__ script variable")
+	}
+
+	// Should contain the card grid container for JS to render into
+	if !strings.Contains(body, "project-cards") {
+		t.Error("expected body to contain project-cards container")
+	}
+}
+
+func TestPage_Landing_ContainsThemeToggle(t *testing.T) {
+	r := setupPageTest(fullPageTestFS())
+
+	w := httptest.NewRecorder()
+	req := httptest.NewRequest(http.MethodGet, "/", nil)
+	r.ServeHTTP(w, req)
+
+	body := w.Body.String()
+	if !strings.Contains(body, "theme-toggle") {
+		t.Error("expected body to contain theme-toggle button")
+	}
+}
+
+func TestPage_Landing_ContainsEmptyState(t *testing.T) {
+	r := setupPageTest(fullPageTestFS())
+
+	w := httptest.NewRecorder()
+	req := httptest.NewRequest(http.MethodGet, "/", nil)
+	r.ServeHTTP(w, req)
+
+	body := w.Body.String()
+	if !strings.Contains(body, "No projects configured") {
+		t.Error("expected body to contain empty state message")
 	}
 }
 
@@ -131,6 +162,39 @@ func TestPage_Landing_EmptyProjects(t *testing.T) {
 
 	if w.Code != http.StatusOK {
 		t.Fatalf("expected 200, got %d", w.Code)
+	}
+
+	body := w.Body.String()
+	// Empty config should still show empty state container
+	if !strings.Contains(body, "empty-state") {
+		t.Error("expected body to contain empty-state container")
+	}
+}
+
+func TestPage_Landing_InvalidPathShowsWarnings(t *testing.T) {
+	gin.SetMode(gin.TestMode)
+	r := gin.New()
+	cfg := &config.Config{
+		Projects: []config.ProjectConfig{
+			{Name: "bad-project", Path: "/nonexistent/path"},
+		},
+	}
+	s := scanner.NewScannerWithFS(cfg, fstest.MapFS{})
+	_, _ = s.ScanAll()
+	RegisterPages(r, s)
+
+	w := httptest.NewRecorder()
+	req := httptest.NewRequest(http.MethodGet, "/", nil)
+	r.ServeHTTP(w, req)
+
+	if w.Code != http.StatusOK {
+		t.Fatalf("expected 200, got %d", w.Code)
+	}
+
+	body := w.Body.String()
+	// Should contain warnings in the JSON data for JS to render
+	if !strings.Contains(body, "warnings") {
+		t.Error("expected body to contain warnings in project data")
 	}
 }
 

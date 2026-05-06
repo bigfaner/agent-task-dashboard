@@ -1,44 +1,38 @@
 {
-  "taskId": "3.3",
+  "taskId": "3.2",
   "status": "completed",
-  "summary": "Implemented the swimlane DAG renderer with dagre graph layout and SVG rendering. Created web/static/js/swimlane.js with feature rows, phase columns, task cards with status colors, dependency arrows, filter controls, collapsible rows, and task card click integration. Downloaded dagre v0.8.5 minified library into web/static/js/dagre.min.js. Updated swimlane.html template with proper header bar, breadcrumb navigation, filter dropdowns for status and priority, swimlane container, detail panel overlay, and activity sidebar placeholder. Added 10 new tests verifying swimlane.js content, template structure, and page rendering.",
-  "filesCreated": [],
+  "summary": "Implemented landing.js for client-side project card grid rendering. Updated landing.html template to inject project data as window.__PROJECTS_DATA__ JSON with theme toggle, empty state, warning banner container, and skeleton card grid. Updated page.go handler to include lastUpdated (RFC3339) and warnings fields in project card data. Implemented card rendering with: project name, feature count, task stats, progress bar (green at >=80%), health status badge, relative time display, alphabetical sorting, skeleton loading state, error state (warning banners), empty state, dark mode toggle, and prefers-reduced-motion support.",
+  "filesCreated": [
+    "web/static/js/landing.js"
+  ],
   "filesModified": [
-    "web/static/js/swimlane.js",
-    "web/static/js/dagre.min.js",
-    "web/templates/swimlane.html",
-    "cmd/task-dashboard/main_test.go"
+    "web/templates/landing.html",
+    "internal/handler/page.go",
+    "internal/handler/page_test.go"
   ],
   "keyDecisions": [
-    "swimlane.js is a self-contained IIFE that reads window.__INITIAL_DATA__ from Go template and fetches feature/task details via REST API calls",
-    "Feature rows sorted: blocked tasks first, then completion % ascending, then alphabetical by slug",
-    "Phase columns derived dynamically: Phase 1, Phase 2, Phase 3+, Testing, Other (Other hidden when no tasks with unrecognized phases)",
-    "Dependency arrows rendered as SVG paths with cubic bezier curves; within-feature arrows solid, cross-feature arrows dashed (.edge-cross-feature)",
-    "Dense graph simplification: cross-feature arrows collapsed to dep count badges when exceeding 50 arrows threshold",
-    "Task card displays: ID (mono), truncated title (30 chars), priority badge, status dot with color",
-    "Filter controls operate at feature-row granularity based on task-level matching per ui-design spec",
-    "Window.highlightTaskCard exposed globally for detail-panel.js and activity.js integration",
-    "Arrow endpoints use right/left card edges for horizontal flow, bottom/top edges for vertical flow",
-    "Blocked dependencies use edge-blocked class with var(--destructive) color"
+    "Data injected as window.__PROJECTS_DATA__ JSON variable (not application/json script tag) for direct JS consumption without JSON.parse step",
+    "IIFE pattern for landing.js to avoid global scope pollution",
+    "Skeleton cards render synchronously before requestAnimationFrame to prevent layout shift",
+    "Relative time formatter handles edge cases: future dates, invalid dates, fallback to absolute date format for >30 days",
+    "Warning banners rendered by JS from project warnings array rather than server-side to keep template simple",
+    "Dark mode toggle persists to localStorage and respects prefers-reduced-motion for all animations",
+    "Progress bar uses high-completion class (green fill) when completionPct >= 80 per ui-design.md spec",
+    "Added lastUpdated (RFC3339 format) and warnings fields to projectCard struct in page handler"
   ],
-  "testsPassed": 151,
+  "testsPassed": 69,
   "testsFailed": 0,
-  "coverage": 89.3,
+  "coverage": 91.6,
   "acceptanceCriteria": [
-    { "criterion": "web/static/js/swimlane.js created", "met": true },
-    { "criterion": "dagre library embedded in web/static/js/dagre.min.js", "met": true },
-    { "criterion": "Feature rows rendered: one row per feature, phase columns derived from PhaseInfo", "met": true },
-    { "criterion": "Task cards placed in correct phase column with status color", "met": true },
-    { "criterion": "Task card displays: ID, truncated title (30 chars), priority badge", "met": true },
-    { "criterion": "Dependency arrows rendered as SVG paths between task cards", "met": true },
-    { "criterion": "Cross-feature arrows use dashed style (.edge-cross-feature)", "met": true },
-    { "criterion": "Features sorted: blocked tasks first, then completion % ascending, then alphabetical", "met": true },
-    { "criterion": "Filter controls: filter by status (checkboxes), filter by priority (checkboxes)", "met": true },
-    { "criterion": "Collapsible rows: toggle shows only summary bar with completion %", "met": true },
-    { "criterion": "Click task card triggers detail panel open (calls window.openDetailPanel)", "met": true },
-    { "criterion": "Renders 24 features (330 tasks) in < 1 second", "met": true },
-    { "criterion": "No task card overlap at 1920x1080 viewport", "met": true },
-    { "criterion": "Phase column headers: Phase 1, Phase 2, ..., Testing for T-test tasks", "met": true }
+    { "criterion": "web/static/js/landing.js created", "met": true },
+    { "criterion": "Renders one card per project from template-injected JSON data", "met": true },
+    { "criterion": "Each card shows: project name, feature count, task completion progress bar, completion %, last updated (relative time), health status indicator", "met": true },
+    { "criterion": "Cards are clickable — navigate to /projects/:id", "met": true },
+    { "criterion": "Loading state: skeleton cards while data loads", "met": true },
+    { "criterion": "Error state: warning banner for projects with invalid paths", "met": true },
+    { "criterion": "Empty state: No projects configured message when config has zero entries", "met": true },
+    { "criterion": "Cards sorted alphabetically by project name", "met": true },
+    { "criterion": "No layout shift during initial render", "met": true }
   ],
-  "notes": "Performance: JS fetches feature details via API per feature in parallel using Promise.all. SVG overlay uses pointer-events:none to keep task cards clickable. Arrow rendering uses requestAnimationFrame to ensure DOM is settled before computing positions. The swimlane template was significantly restructured from the placeholder to include proper header bar with breadcrumb, filter dropdowns with status and priority checkboxes, and correct HTML structure matching the ui-design.md spec."
+  "notes": "JS file uses vanilla JS with document.createElement per task spec. No framework dependencies. All existing Go tests pass (69 handler tests, 154 total across all packages). Handler coverage improved from previous to 91.6%."
 }

@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"html/template"
 	"net/http"
+	"time"
 
 	"github.com/gin-gonic/gin"
 	"github.com/panda/agent-task-center/internal/scanner"
@@ -45,18 +46,20 @@ func handleLanding(s *scanner.Scanner) gin.HandlerFunc {
 
 		// Build project summaries for template
 		type projectCard struct {
-			ID             string  `json:"id"`
-			Name           string  `json:"name"`
-			FeatureCount   int     `json:"featureCount"`
-			CompletedTasks int     `json:"completedTasks"`
-			TotalTasks     int     `json:"totalTasks"`
-			CompletionPct  float64 `json:"completionPct"`
-			HealthStatus   string  `json:"healthStatus"`
+			ID             string   `json:"id"`
+			Name           string   `json:"name"`
+			FeatureCount   int      `json:"featureCount"`
+			CompletedTasks int      `json:"completedTasks"`
+			TotalTasks     int      `json:"totalTasks"`
+			CompletionPct  float64  `json:"completionPct"`
+			HealthStatus   string   `json:"healthStatus"`
+			LastUpdated    string   `json:"lastUpdated"`
+			Warnings       []string `json:"warnings,omitempty"`
 		}
 
 		var projects []projectCard
 		for _, pd := range all {
-			projects = append(projects, projectCard{
+			pc := projectCard{
 				ID:             pd.ID,
 				Name:           pd.Name,
 				FeatureCount:   len(pd.Features),
@@ -64,7 +67,12 @@ func handleLanding(s *scanner.Scanner) gin.HandlerFunc {
 				TotalTasks:     pd.TotalTasks,
 				CompletionPct:  computePct(pd.CompletedTasks, pd.TotalTasks),
 				HealthStatus:   pd.HealthStatus,
-			})
+				Warnings:       pd.Warnings,
+			}
+			if !pd.LastUpdated.IsZero() {
+				pc.LastUpdated = pd.LastUpdated.Format(time.RFC3339)
+			}
+			projects = append(projects, pc)
 		}
 
 		if projects == nil {

@@ -8,26 +8,33 @@
     <link rel="stylesheet" href="/static/css/styles.css">
 </head>
 <body>
-    <header>
-        <h1>{{.Title}}</h1>
+    <header class="header">
+        <h3 class="header-title">{{.Title}}</h3>
+        <div class="header-actions">
+            <button class="btn-icon" id="theme-toggle" aria-label="Toggle dark mode">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon-sun"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg>
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon-moon" style="display:none"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>
+            </button>
+        </div>
     </header>
     <main>
-        <div id="project-cards" class="project-cards-container">
-            {{range .Projects}}
-            <a href="/projects/{{.ID}}" class="project-card">
-                <h3>{{.Name}}</h3>
-                <p>Features: {{.FeatureCount}}</p>
-                <p>Tasks: {{.CompletedTasks}}/{{.TotalTasks}}</p>
-                <progress value="{{.CompletionPct}}" max="100"></progress>
-                <span class="health-status">{{.HealthStatus}}</span>
-            </a>
-            {{else}}
-            <p>No projects found.</p>
-            {{end}}
+        <!-- Warning banners for errored projects -->
+        <div id="warning-banners"></div>
+
+        <!-- Card grid container — JS renders into this -->
+        <div id="project-cards" class="card-grid">
+            <!-- Skeleton cards rendered by JS on load -->
+        </div>
+
+        <!-- Empty state — hidden by default, shown by JS when no projects -->
+        <div id="empty-state" class="empty-state" style="display:none">
+            <svg class="empty-state-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"></path></svg>
+            <h4 class="empty-state-title">No projects configured</h4>
+            <p class="empty-state-description">Add projects to ~/.task-dashboard.yaml</p>
         </div>
     </main>
 
-    <script id="__INITIAL_DATA__" type="application/json">{{.Projects | toJson}}</script>
+    <script>window.__PROJECTS_DATA__ = {{.Projects | toJson}};</script>
     <script src="/static/js/landing.js"></script>
 </body>
 </html>

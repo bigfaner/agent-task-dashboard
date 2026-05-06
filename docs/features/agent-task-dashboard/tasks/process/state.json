@@ -1,16 +1,15 @@
 {
-  "task_id": "3.3",
-  "key": "3.3-swimlane-dag",
-  "title": "Swimlane DAG Renderer",
-  "priority": "P0",
-  "estimatedTime": "4h",
+  "task_id": "3.2",
+  "key": "3.2-landing-page",
+  "title": "Landing Page — Project Card Grid",
+  "priority": "P1",
+  "estimatedTime": "2h",
   "dependencies": [
     "2.gate",
     "3.1"
   ],
-  "file": "3.3-swimlane-dag.md",
-  "record": "records/3.3-swimlane-dag.md",
-  "startedTime": "2026-05-07 02:00",
-  "breaking": true,
+  "file": "3.2-landing-page.md",
+  "record": "records/3.2-landing-page.md",
+  "startedTime": "2026-05-07 02:11",
   "scope": "all"
 }
