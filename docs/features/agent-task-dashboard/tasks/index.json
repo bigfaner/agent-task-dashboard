@@ -133,7 +133,7 @@
       "dependencies": [
         "1.gate"
       ],
-      "status": "pending",
+      "status": "completed",
       "file": "2.1-markdown-parser.md",
       "record": "records/2.1-markdown-parser.md",
       "scope": "all"

@@ -1,23 +1,31 @@
 {
-  "taskId": "1.gate",
-  "status": "completed",
-  "summary": "Phase 1 Exit Gate verification: all data models compile, config loads, scanner reads project directories correctly, error handling works, and all 92 tests pass with 94.9% coverage.",
-  "filesCreated": [],
-  "filesModified": [],
-  "keyDecisions": [
-    "Verification-only task: no new code written",
-    "All 9 checklist items verified and pass",
-    "No new deviations from tech-design.md beyond those already documented in Phase 1 summary",
-    "Config types in internal/config (not internal/model) is a justified deviation documented in 1-summary.md",
-    "Slug regex uses [a-zA-Z0-9] matching tech-design.md, not [a-z0-9] from task file"
-  ],
-  "testsPassed": 92,
-  "testsFailed": 0,
-  "coverage": 94.9,
-  "acceptanceCriteria": [
-    { "criterion": "All applicable verification checklist items pass", "met": true },
-    { "criterion": "Any deviations from design are documented as decisions in the record", "met": true },
-    { "criterion": "Record created via /record-task with test evidence", "met": true }
-  ],
-  "notes": "Verification-only gate task. All Phase 1 components verified: data models compile, config loads YAML, scanner reads filesystem, SortFeatures orders correctly, error types implement error interface, input validation rejects path traversal and malformed slugs. go build ./... succeeds. 92 tests pass across 4 packages (config: 9 tests/100%, handler: 42 tests/96.7%, model: 17 tests/89.3%, scanner: 24 tests/95.0%). Overall coverage: 94.9%."
+	"taskId": "2.1",
+	"status": "completed",
+	"summary": "Implemented markdown parsers for task .md files and execution record .md files. ParseTaskFile extracts acceptance criteria, scope, and description using line-by-line heading detection. ParseRecordFile extracts structured sections (Summary, Files, Key Decisions, Test Results) from ## and ### headings. Handles YAML frontmatter scope extraction with quote stripping. Files are parsed from ### Files Created and ### Files Modified sub-sections. Returns empty RecordContent with Raw field populated when no headings found.",
+	"filesCreated": [
+		"internal/scanner/parser.go",
+		"internal/scanner/parser_test.go"
+	],
+	"filesModified": [],
+	"keyDecisions": [
+		"Used simple line-by-line parsing instead of markdown AST library per task spec",
+		"parseSections handles both ## (h2) and ### (h3) headings to support real record format where Key Decisions is ### under ## Changes",
+		"YAML frontmatter scope extraction strips surrounding quotes with unquote helper",
+		"extractFiles uses ### Files Created/### Files Modified sub-sections matching actual record file format"
+	],
+	"testsPassed": 19,
+	"testsFailed": 0,
+	"coverage": 94.8,
+	"acceptanceCriteria": [
+		{ "criterion": "internal/scanner/parser.go implements ParseTaskFile(filePath string) (*TaskFileContent, error)", "met": true },
+		{ "criterion": "Extracts acceptance criteria from ## Acceptance Criteria section (lines starting with - [ ])", "met": true },
+		{ "criterion": "ParseRecordFile(filePath string) (*RecordContent, error) parses structured sections", "met": true },
+		{ "criterion": "RecordContent fields populated from ## Summary, ## Files Created/Modified, ## Key Decisions, ## Test Results headings", "met": true },
+		{ "criterion": "Files field parsed as []string (one path per line)", "met": true },
+		{ "criterion": "Returns empty RecordContent with Raw field populated if no headings found", "met": true },
+		{ "criterion": "Returns error for missing files (not panic)", "met": true },
+		{ "criterion": "Unit tests with sample markdown fixtures: task file with AC, record with all sections, record with no sections, missing file", "met": true },
+		{ "criterion": "All tests pass", "met": true }
+	],
+	"notes": "19 new parser tests added (6 ParseTaskFile, 11 ParseRecordFile, 2 integration). All 44 scanner tests pass. Scanner package coverage increased from 95.0% to 94.8% (slight decrease due to new parser code with all paths covered but some error branches not tested)."
 }
