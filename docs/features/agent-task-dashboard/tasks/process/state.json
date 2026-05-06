@@ -1,11 +1,14 @@
 {
-  "task_id": "disc-1",
-  "key": "disc-1",
-  "title": "Fix e2e: TC-013/014 filter dropdown + TC-022 overlay interception",
-  "priority": "P0",
-  "estimatedTime": "30min",
-  "file": "disc-1.md",
-  "record": "records/disc-1.md",
-  "startedTime": "2026-05-07 03:06",
-  "breaking": true
+  "task_id": "T-test-4.5",
+  "key": "verify-regression",
+  "title": "Verify Full E2E Regression",
+  "priority": "P1",
+  "estimatedTime": "15-30min",
+  "dependencies": [
+    "T-test-4"
+  ],
+  "file": "verify-regression.md",
+  "record": "records/verify-regression.md",
+  "startedTime": "2026-05-07 03:10",
+  "scope": "all"
 }
