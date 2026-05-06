@@ -339,6 +339,7 @@
     var keys = Object.keys(tasks);
     for (var i = 0; i < keys.length; i++) {
       var task = tasks[keys[i]];
+      task._feature = feature.slug; // Track feature slug for detail-panel.js
       var colIdx = getPhaseColumnIndex(task, phases);
       columns[colIdx].push(task);
     }
@@ -663,9 +664,16 @@
     var taskId = card.dataset.taskId;
     if (!taskId) return;
 
+    // Determine feature slug from the card's parent row
+    var featureSlug = '';
+    var row = card.closest('.feature-row');
+    if (row) {
+      featureSlug = row.dataset.feature || '';
+    }
+
     // Call openDetailPanel if available (from detail-panel.js)
     if (typeof window.openDetailPanel === 'function') {
-      window.openDetailPanel(taskId);
+      window.openDetailPanel(taskId, featureSlug);
     }
   }
 
@@ -690,6 +698,14 @@
     setTimeout(function () {
       card.classList.remove('highlighted');
     }, 2000);
+  };
+
+  // ---------------------------------------------------------------------------
+  // Toggle feature row (exposed for detail-panel.js)
+  // ---------------------------------------------------------------------------
+
+  window.toggleFeatureRow = function (slug) {
+    toggleRow(slug);
   };
 
   // ---------------------------------------------------------------------------
