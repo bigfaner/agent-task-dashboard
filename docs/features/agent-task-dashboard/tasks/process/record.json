@@ -1,38 +1,24 @@
 {
-  "taskId": "3.2",
+  "taskId": "3.summary",
   "status": "completed",
-  "summary": "Implemented landing.js for client-side project card grid rendering. Updated landing.html template to inject project data as window.__PROJECTS_DATA__ JSON with theme toggle, empty state, warning banner container, and skeleton card grid. Updated page.go handler to include lastUpdated (RFC3339) and warnings fields in project card data. Implemented card rendering with: project name, feature count, task stats, progress bar (green at >=80%), health status badge, relative time display, alphabetical sorting, skeleton loading state, error state (warning banners), empty state, dark mode toggle, and prefers-reduced-motion support.",
-  "filesCreated": [
-    "web/static/js/landing.js"
-  ],
-  "filesModified": [
-    "web/templates/landing.html",
-    "internal/handler/page.go",
-    "internal/handler/page_test.go"
-  ],
+  "summary": "## Tasks Completed\n\n- **3.1 CSS Styles**: Created base stylesheet with full CSS design system: custom properties for light/dark mode, status color variables for all 5 statuses, priority badges, responsive project card grid, swimlane layout, SVG dependency arrow overlay with cross-feature dashed edges, detail panel slide-in animation, collapsible activity sidebar, health status indicators, skeleton loading states, reduced-motion support, and responsive breakpoints for 768/1024/1280px.\n- **3.2 Landing Page**: Implemented landing.js for client-side project card grid rendering with template-injected JSON data. Updated landing.html with theme toggle, empty state, warning banner container, and skeleton card grid. Updated page.go handler to include lastUpdated and warnings fields. Cards show project name, feature count, task stats, progress bar, health badge, relative time, with alphabetical sorting and dark mode support.\n- **3.3 Swimlane DAG**: Implemented swimlane DAG renderer with dagre graph layout and SVG rendering in swimlane.js. Downloaded dagre v0.8.5. Restructured swimlane.html with header bar, breadcrumb navigation, filter dropdowns, swimlane container, detail panel overlay, and activity sidebar. Feature rows sorted by blocked-first then completion %. Phase columns derived dynamically. Dependency arrows as SVG cubic bezier paths with dense graph simplification.\n- **3.4 Detail Panel**: Implemented task detail slide-over panel (detail-panel.js) opening from right at 40% viewport width. Fetches task detail from API, renders metadata, acceptance criteria checklist, execution record sections. Dependencies are clickable links with cross-feature navigation. Close via X button, overlay click, or Escape key. Includes focus trap, error state, no-record state.\n- **3.5 Activity Sidebar**: Implemented collapsible activity sidebar with event rendering. Added activity event derivation in Go page handler (deriveActivityEvents). activity.js handles event rendering, collapse/expand with blocked count badge, click-to-navigate, empty state, and detail panel auto-collapse via MutationObserver. Events sorted by timestamp descending, limited to 50 most recent.\n\n## Key Decisions\n\n- **3.1**: CSS custom properties throughout for theming (light/dark via data-theme attribute). z-index layering: svg-overlay=10, task-cards=20, header=30, detail-panel=40. Detail panel 40vw width min 480px, 200ms ease-out slide-in.\n- **3.2**: Data injected as window.__PROJECTS_DATA__ JSON variable for direct JS consumption. IIFE pattern for landing.js. Skeleton cards render synchronously before requestAnimationFrame to prevent layout shift. Progress bar uses green fill when completionPct >= 80.\n- **3.3**: swimlane.js as self-contained IIFE reading window.__INITIAL_DATA__. Feature rows sorted: blocked first, completion % ascending, alphabetical. Phase columns: Phase 1, Phase 2, Phase 3+, Testing, Other (hidden when empty). Dense graph simplification: cross-feature arrows collapsed to dep count badges when exceeding 50 arrows. Window.highlightTaskCard exposed globally.\n- **3.4**: detail-panel.js as self-contained IIFE exposing window.openDetailPanel and window.navigateToTask. Dependency chips resolve feature slug by scanning DOM. Focus trap with Tab/Shift+Tab wrapping. scrollToTask handles same-feature and cross-feature navigation.\n- **3.5**: Activity events derived server-side from task status + feature mtime, embedded in template JSON. statusToEventType maps in_progress->claimed, completed->completed, blocked->blocked, skipped->skipped. Sidebar auto-collapses when detail panel opens via MutationObserver.\n\n## Types & Interfaces Changed\n\n| Type/Interface | Change | Blast Radius |\n|---|---|---|\n| page.go projectCard struct | Added lastUpdated (RFC3339) and warnings fields | Landing page handler, page_test.go |\n| page.go handleProject | Added deriveActivityEvents, countBlockedTasks, statusToEventType functions | Swimlane handler, page_test.go |\n| swimlane.html template | Restructured with header bar, breadcrumb, filter dropdowns, detail panel overlay, activity sidebar placeholder | Swimlane page rendering |\n| landing.html template | Added window.__PROJECTS_DATA__ injection, theme toggle, skeleton grid, empty state | Landing page rendering |\n\n## Conventions Established\n\n- All JS files use IIFE pattern to avoid global scope pollution, exposing only necessary window.* APIs.\n- Template data injection via window.__*__ JSON variables for client-side rendering.\n- SVG overlay uses pointer-events:none to keep task cards clickable.\n- Arrow rendering uses requestAnimationFrame to ensure DOM is settled before computing positions.\n- CSS custom properties for all theming; no hardcoded colors in JS.\n- prefers-reduced-motion media queries wrap all animations with instant fallbacks.\n\n## Deviations from Design\n\n- None. All Phase 3 tasks implemented according to tech-design.md and ui-design.md specifications. No scope changes or omissions.",
+  "filesCreated": [],
+  "filesModified": [],
   "keyDecisions": [
-    "Data injected as window.__PROJECTS_DATA__ JSON variable (not application/json script tag) for direct JS consumption without JSON.parse step",
-    "IIFE pattern for landing.js to avoid global scope pollution",
-    "Skeleton cards render synchronously before requestAnimationFrame to prevent layout shift",
-    "Relative time formatter handles edge cases: future dates, invalid dates, fallback to absolute date format for >30 days",
-    "Warning banners rendered by JS from project warnings array rather than server-side to keep template simple",
-    "Dark mode toggle persists to localStorage and respects prefers-reduced-motion for all animations",
-    "Progress bar uses high-completion class (green fill) when completionPct >= 80 per ui-design.md spec",
-    "Added lastUpdated (RFC3339 format) and warnings fields to projectCard struct in page handler"
+    "Phase 3 (Frontend) completed with 5 tasks covering CSS design system, landing page, swimlane DAG, detail panel, and activity sidebar",
+    "All frontend JS uses vanilla JS with IIFE pattern, no framework dependencies",
+    "Template data injection via window.__*__ JSON variables, not separate API calls for initial page load",
+    "Server-side event derivation for activity sidebar avoids extra API call",
+    "CSS custom properties throughout for light/dark theming; z-index layering established"
   ],
-  "testsPassed": 69,
+  "testsPassed": 0,
   "testsFailed": 0,
-  "coverage": 91.6,
+  "coverage": -1.0,
   "acceptanceCriteria": [
-    { "criterion": "web/static/js/landing.js created", "met": true },
-    { "criterion": "Renders one card per project from template-injected JSON data", "met": true },
-    { "criterion": "Each card shows: project name, feature count, task completion progress bar, completion %, last updated (relative time), health status indicator", "met": true },
-    { "criterion": "Cards are clickable — navigate to /projects/:id", "met": true },
-    { "criterion": "Loading state: skeleton cards while data loads", "met": true },
-    { "criterion": "Error state: warning banner for projects with invalid paths", "met": true },
-    { "criterion": "Empty state: No projects configured message when config has zero entries", "met": true },
-    { "criterion": "Cards sorted alphabetically by project name", "met": true },
-    { "criterion": "No layout shift during initial render", "met": true }
+    { "criterion": "All Phase 3 task records have been read", "met": true },
+    { "criterion": "Summary follows the exact 5-section template", "met": true },
+    { "criterion": "Types & Interfaces Changed table lists every changed type", "met": true },
+    { "criterion": "Record created via /record-task with coverage: -1.0", "met": true }
   ],
-  "notes": "JS file uses vanilla JS with document.createElement per task spec. No framework dependencies. All existing Go tests pass (69 handler tests, 154 total across all packages). Handler coverage improved from previous to 91.6%."
+  "notes": "Documentation-only task. All 5 Phase 3 tasks (3.1 through 3.5) completed successfully with Go test coverage ranging from 88.2% to 92.5%. Frontend is fully functional with CSS design system, landing page project cards, swimlane DAG renderer, detail slide-over panel, and activity sidebar."
 }
