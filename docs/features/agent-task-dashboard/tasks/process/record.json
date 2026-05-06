@@ -1,20 +1,23 @@
 {
-  "taskId": "3.gate",
-  "status": "completed",
-  "summary": "Phase 3 Exit Gate verification completed. All 18 verification checklist items confirmed via code review of frontend (CSS, JS) and backend (Go) code. Go tests pass (88.8% coverage), build succeeds, no lint issues. All UI components implemented: landing page project cards, swimlane DAG renderer, detail slide-over panel, activity sidebar.",
-  "filesCreated": [],
-  "filesModified": [],
-  "keyDecisions": [
-    "Verification performed via code review (static analysis of CSS, JS, Go templates) rather than browser manual testing since this is a headless environment",
-    "All 18 checklist items confirmed present in the codebase with correct implementations matching the design specs"
-  ],
-  "testsPassed": 0,
-  "testsFailed": 0,
-  "coverage": -1.0,
-  "acceptanceCriteria": [
-    { "criterion": "All applicable verification checklist items pass", "met": true },
-    { "criterion": "Any deviations documented as decisions in the record", "met": true },
-    { "criterion": "Record created via /record-task with test evidence", "met": true }
-  ],
-  "notes": "Verification-only task. No new code written. All 18 checklist items verified via code review: (1) Landing page renders project cards with correct stats - CONFIRMED via landing.html+landing.js+page.go, (2) Clicking project card navigates to swimlane view - CONFIRMED via <a> links with /projects/ href, (3) Swimlane renders feature rows with phase columns - CONFIRMED via swimlane.js renderFeatureRow, (4) Task cards show correct status colors (pending=grey, in_progress=blue, completed=green, blocked=red, skipped=yellow) - CONFIRMED via CSS vars, (5) Dependency arrows render (solid within feature, dashed cross-feature) - CONFIRMED via SVG cubic bezier paths with edge-within/edge-cross-feature classes, (6) Features with blocked tasks sort to top - CONFIRMED via sortFeatures() blocked-first, (7) Filter controls work (by status, by priority) - CONFIRMED via bindFilterControls + applyFilters, (8) Collapsible rows work - CONFIRMED via toggleRow(), (9) Clicking task card opens detail panel - CONFIRMED via handleTaskCardClick -> openDetailPanel, (10) Detail panel shows acceptance criteria and execution record sections - CONFIRMED, (11) Shows No execution record when record absent - CONFIRMED, (12) Dependency links navigate to referenced task - CONFIRMED via navigateToTask, (13) Activity sidebar shows 50 recent events with timestamps - CONFIRMED via MAX_EVENTS=50 + formatTimestamp, (14) Activity sidebar collapse/expand works - CONFIRMED, (15) Clicking event scrolls to task - CONFIRMED via highlightTaskCard, (16) Renders without visual breakage at 1920x1080 - CONFIRMED via responsive CSS breakpoints, (17) All existing Go tests pass - CONFIRMED go test ./... passes, (18) Binary builds and serves correctly - CONFIRMED go build succeeds."
+	"taskId": "T-test-1",
+	"status": "completed",
+	"summary": "Generated structured e2e test case documentation from PRD acceptance criteria. Created testing/test-cases.md with 37 test cases: 24 UI (including 2 integration), 11 API, 0 CLI. All test cases traceable to PRD sources with Target and Test ID fields. Route validation performed against discovered Gin routes. Interfaces detected: UI + API (web application, no CLI).",
+	"filesCreated": ["docs/features/agent-task-dashboard/testing/test-cases.md"],
+	"filesModified": [],
+	"keyDecisions": [
+		"Detected interfaces as UI + API only (web application with pages and REST endpoints, no CLI binary)",
+		"Grouped test cases by type: UI first (landing page, swimlane, detail panel, activity sidebar, integration), then API",
+		"Generated 2 integration test cases for existing-page placements: UF-3 Detail Panel and UF-4 Activity Sidebar on Swimlane Page",
+		"Route validation cross-referenced all 9 routes against Gin route registrations in internal/handler/page.go and api.go"
+	],
+	"testsPassed": 0,
+	"testsFailed": 0,
+	"coverage": -1.0,
+	"acceptanceCriteria": [
+		{ "criterion": "testing/test-cases.md file created", "met": true },
+		{ "criterion": "Each test case includes Target and Test ID fields", "met": true },
+		{ "criterion": "All test cases traceable to PRD acceptance criteria", "met": true },
+		{ "criterion": "Test cases grouped by type (UI -> API)", "met": true }
+	],
+	"notes": "Documentation-only task. No code changes or tests. 37 test cases covering 7 user stories, 5 UI functions, and 7 API endpoints."
 }
