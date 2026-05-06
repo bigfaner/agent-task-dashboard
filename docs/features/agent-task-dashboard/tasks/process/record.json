@@ -1,34 +1,32 @@
 {
-  "taskId": "1.4",
+  "taskId": "1.5",
   "status": "completed",
-  "summary": "Implemented Scanner that reads project directories, parses index.json files, and builds the in-memory data model using fs.FS interface for testability. Includes ScanAll, ScanProject, Invalidate, SortFeatures, wildcard dependency expansion, phase derivation, and health status computation.",
+  "summary": "Implemented validation middleware for URL path parameters and error handling middleware for Gin. ValidateSlug enforces ^[a-zA-Z0-9][a-zA-Z0-9-]*[a-zA-Z0-9]$ regex on :slug params. ValidateTaskID enforces ^[a-zA-Z0-9._-]+$ and blocks path traversal (..). ErrorHandler catches scanner model errors and maps them to consistent JSON error responses with appropriate HTTP status codes (400, 404, 500).",
   "filesCreated": [
-    "internal/scanner/scanner.go",
-    "internal/scanner/scanner_test.go"
+    "internal/handler/middleware.go",
+    "internal/handler/middleware_test.go",
+    "internal/handler/testhelpers_test.go"
   ],
   "filesModified": [],
   "keyDecisions": [
-    "Used dirFSWrapper marker interface to distinguish production os.DirFS from test fstest.MapFS, enabling correct path handling on both Windows and Unix",
-    "Used os.DirFS(projectPath) per-project instead of fs.Sub from root, to handle Windows absolute paths correctly",
-    "SortFeatures implemented as package-level function per tech design, sorting blocked-first then completion-ascending then alphabetical"
+    "Regex patterns compiled at package init time (var declarations) rather than per-request for performance",
+    "Task ID validation uses regex match plus explicit path traversal check for '..' since dots are valid in task IDs (e.g., '1.1') but '..' is not",
+    "Error handler is post-handler middleware (uses c.Next() then checks c.Errors) to catch errors from downstream handlers",
+    "Internal error types (ErrInvalidSlug) map to external codes (invalid_slug) in the error handler middleware, keeping model layer clean",
+    "Gin's router naturally rejects path params containing '/' so middleware only needs to handle non-slash invalid chars"
   ],
-  "testsPassed": 24,
+  "testsPassed": 42,
   "testsFailed": 0,
-  "coverage": 95.0,
+  "coverage": 96.7,
   "acceptanceCriteria": [
-    { "criterion": "internal/scanner/scanner.go implements Scanner struct with fs.FS field", "met": true },
-    { "criterion": "NewScanner(cfg *Config) *Scanner creates scanner using os.DirFS for production", "met": true },
-    { "criterion": "ScanAll() map[string]*ProjectData reads all configured projects", "met": true },
-    { "criterion": "ScanProject(id string) (*ProjectData, error) reads a single project", "met": true },
-    { "criterion": "Invalidate() clears the in-memory cache", "met": true },
-    { "criterion": "SortFeatures sorts: blocked first, completion % ascending, alphabetical", "met": true },
-    { "criterion": "Skips projects with invalid paths (adds to ProjectData.Warnings)", "met": true },
-    { "criterion": "Skips features with malformed index.json (logs warning)", "met": true },
-    { "criterion": "Derives PhaseInfo from task IDs in each feature", "met": true },
-    { "criterion": "Computes HealthStatus: active, complete, stale", "met": true },
-    { "criterion": "Expands wildcard dependencies (1.x) to individual task IDs", "met": true },
-    { "criterion": "Unit tests using fstest.MapFS: valid project, missing features dir, malformed JSON, wildcard expansion, sort order", "met": true },
-    { "criterion": "Integration tests using temp directory with real index.json fixtures", "met": true },
-    { "criterion": "All tests pass", "met": true }
-  ]
+    {"criterion": "internal/handler/middleware.go implements validation middleware for :id, :slug, :taskId path params", "met": true},
+    {"criterion": "Slug validation: ^[a-z0-9][a-z0-9-]*[a-z0-9]$ (alphanumeric + hyphens, 2+ chars)", "met": true},
+    {"criterion": "Task ID validation: ^[a-zA-Z0-9._-]+$ (no path traversal sequences like ..)", "met": true},
+    {"criterion": "Invalid input returns HTTP 400 with {\"error\": \"invalid_slug\", \"message\": \"...\"} or {\"error\": \"invalid_task_id\", ...}", "met": true},
+    {"criterion": "Gin error middleware catches scanner errors and maps to appropriate HTTP status codes (404, 500)", "met": true},
+    {"criterion": "Error response format consistent: {\"error\": \"<code>\", \"message\": \"<description>\"}", "met": true},
+    {"criterion": "Unit tests: valid slug passes, ../ rejected, spaces rejected, valid task IDs pass, .. rejected", "met": true},
+    {"criterion": "All tests pass", "met": true}
+  ],
+  "notes": "The slug regex in the implementation uses [a-zA-Z0-9] (case-insensitive for letters) rather than [a-z0-9] as stated in the task file, because the tech-design.md uses ^[a-zA-Z0-9-]+$ as the regex pattern. Both achieve the same goal of alphanumeric + hyphens."
 }
