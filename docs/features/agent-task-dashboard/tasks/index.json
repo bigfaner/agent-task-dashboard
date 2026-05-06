@@ -51,7 +51,7 @@
       "dependencies": [
         "1.1"
       ],
-      "status": "pending",
+      "status": "completed",
       "file": "1.2-data-models.md",
       "record": "records/1.2-data-models.md",
       "breaking": true,
