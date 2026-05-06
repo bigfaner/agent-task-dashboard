@@ -1,1 +1,1559 @@
-/* placeholder */
+/* ==========================================================================
+   Agent Task Dashboard — Base Stylesheet
+   Style: Shadcn-inspired, zinc neutrals, functional minimalism
+   Min viewport: 1920x1080 (primary), responsive breakpoints at 1280/1024/768
+   ========================================================================== */
+
+/* --------------------------------------------------------------------------
+   1. CSS Custom Properties — Design Tokens
+   -------------------------------------------------------------------------- */
+:root {
+  /* Light mode base palette */
+  --background: #ffffff;
+  --foreground: #09090b;
+  --card: #ffffff;
+  --card-foreground: #09090b;
+  --primary: #18181b;
+  --primary-foreground: #fafafa;
+  --secondary: #f4f4f5;
+  --secondary-foreground: #18181b;
+  --muted: #f4f4f5;
+  --muted-foreground: #71717a;
+  --accent: #f4f4f5;
+  --accent-foreground: #18181b;
+  --destructive: #ef4444;
+  --destructive-foreground: #fafafa;
+  --border: #e4e4e7;
+  --input: #e4e4e7;
+  --ring: #18181b;
+  --popover: #ffffff;
+  --popover-foreground: #09090b;
+
+  /* Status colors — light mode */
+  --status-pending: #71717a;
+  --status-in-progress: #2563eb;
+  --status-completed: #16a34a;
+  --status-blocked: #dc2626;
+  --status-skipped: #ca8a04;
+
+  /* Health status colors */
+  --health-active: #16a34a;
+  --health-complete: #2563eb;
+  --health-stale: #71717a;
+
+  /* Priority colors */
+  --priority-p0: #ef4444;
+  --priority-p0-foreground: #ffffff;
+  --priority-p1: #f4f4f5;
+  --priority-p1-foreground: #18181b;
+  --priority-p2: transparent;
+
+  /* Typography */
+  --font-sans: Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, "SF Mono", Menlo, monospace;
+
+  /* Spacing */
+  --sidebar-expanded: 320px;
+  --sidebar-collapsed: 48px;
+  --header-height: 56px;
+  --phase-header-height: 40px;
+  --row-header-height: 40px;
+
+  /* Detail panel */
+  --detail-panel-width: 40vw;
+  --detail-panel-min-width: 480px;
+
+  /* Transitions */
+  --transition-fast: 150ms ease;
+  --transition-normal: 200ms ease-out;
+  --transition-collapse: 200ms ease-in;
+
+  /* Z-index layers */
+  --z-swimlane: 1;
+  --z-svg-overlay: 10;
+  --z-task-card: 20;
+  --z-header: 30;
+  --z-detail-panel: 40;
+  --z-overlay: 39;
+}
+
+/* Dark mode */
+[data-theme="dark"] {
+  --background: #09090b;
+  --foreground: #fafafa;
+  --card: #09090b;
+  --card-foreground: #fafafa;
+  --primary: #fafafa;
+  --primary-foreground: #18181b;
+  --secondary: #27272a;
+  --secondary-foreground: #fafafa;
+  --muted: #27272a;
+  --muted-foreground: #a1a1aa;
+  --accent: #27272a;
+  --accent-foreground: #fafafa;
+  --destructive: #ef4444;
+  --destructive-foreground: #fafafa;
+  --border: #27272a;
+  --input: #27272a;
+  --ring: #fafafa;
+  --popover: #09090b;
+  --popover-foreground: #fafafa;
+
+  /* Status colors — dark mode */
+  --status-pending: #a1a1aa;
+  --status-in-progress: #3b82f6;
+  --status-completed: #22c55e;
+  --status-blocked: #ef4444;
+  --status-skipped: #eab308;
+
+  /* Health status colors — dark mode */
+  --health-active: #22c55e;
+  --health-complete: #3b82f6;
+  --health-stale: #a1a1aa;
+
+  /* Priority colors — dark mode */
+  --priority-p0: #ef4444;
+  --priority-p0-foreground: #ffffff;
+  --priority-p1: #27272a;
+  --priority-p1-foreground: #fafafa;
+  --priority-p2: transparent;
+}
+
+/* --------------------------------------------------------------------------
+   2. Reset & Base
+   -------------------------------------------------------------------------- */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  font-size: 16px;
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+body {
+  font-family: var(--font-sans);
+  font-weight: 400;
+  color: var(--foreground);
+  background-color: var(--background);
+  min-width: 768px;
+  overflow-x: hidden;
+}
+
+/* Prevent horizontal scroll on main content for viewports >= 1920px */
+@media (min-width: 1920px) {
+  body {
+    overflow-x: hidden;
+  }
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+button {
+  font-family: inherit;
+  font-size: inherit;
+  cursor: pointer;
+  border: none;
+  background: none;
+  color: inherit;
+}
+
+ul, ol {
+  list-style: none;
+}
+
+img {
+  max-width: 100%;
+  display: block;
+}
+
+/* --------------------------------------------------------------------------
+   3. Typography
+   -------------------------------------------------------------------------- */
+.h1, h1 {
+  font-weight: 700;
+  font-size: 36px;
+  line-height: 1.2;
+}
+
+.h2, h2 {
+  font-weight: 600;
+  font-size: 30px;
+  line-height: 1.25;
+}
+
+.h3, h3 {
+  font-weight: 600;
+  font-size: 24px;
+  line-height: 1.3;
+}
+
+.h4, h4 {
+  font-weight: 600;
+  font-size: 20px;
+  line-height: 1.35;
+}
+
+.text-body {
+  font-weight: 400;
+  font-size: 16px;
+  line-height: 1.5;
+}
+
+.text-small {
+  font-weight: 500;
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+.text-xs {
+  font-size: 12px;
+  line-height: 1.5;
+}
+
+.text-mono {
+  font-family: var(--font-mono);
+  font-weight: 400;
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+.text-muted {
+  color: var(--muted-foreground);
+}
+
+.font-medium {
+  font-weight: 500;
+}
+
+.font-semibold {
+  font-weight: 600;
+}
+
+/* Screen-reader only utility */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* --------------------------------------------------------------------------
+   4. Header Bar
+   -------------------------------------------------------------------------- */
+.header {
+  position: sticky;
+  top: 0;
+  z-index: var(--z-header);
+  height: var(--header-height);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 24px;
+  background-color: var(--background);
+  border-bottom: 1px solid var(--border);
+}
+
+.header-title {
+  font-weight: 600;
+  font-size: 24px;
+  line-height: 1.3;
+}
+
+.header-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* Breadcrumb navigation */
+.breadcrumb {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 14px;
+}
+
+.breadcrumb a {
+  color: var(--muted-foreground);
+  transition: color var(--transition-fast);
+}
+
+.breadcrumb a:hover {
+  color: var(--foreground);
+}
+
+.breadcrumb-separator {
+  color: var(--muted-foreground);
+}
+
+.breadcrumb-current {
+  font-weight: 500;
+}
+
+/* --------------------------------------------------------------------------
+   5. Project Card Grid (Landing Page)
+   -------------------------------------------------------------------------- */
+.card-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 24px;
+  padding: 32px 24px;
+}
+
+/* --------------------------------------------------------------------------
+   6. Cards
+   -------------------------------------------------------------------------- */
+.card {
+  background-color: var(--card);
+  color: var(--card-foreground);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 24px;
+  transition: border-color var(--transition-fast);
+}
+
+.card:hover {
+  border-color: var(--ring);
+  cursor: pointer;
+}
+
+.card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 12px;
+}
+
+.card-title {
+  font-weight: 600;
+  font-size: 20px;
+  line-height: 1.35;
+}
+
+.card-stats {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 12px;
+  font-size: 14px;
+}
+
+.card-stats .stat-muted {
+  color: var(--muted-foreground);
+}
+
+.card-stats .stat-divider {
+  color: var(--border);
+}
+
+/* Progress bar */
+.progress-bar {
+  width: 100%;
+  height: 8px;
+  border-radius: 9999px;
+  background-color: var(--secondary);
+  overflow: hidden;
+}
+
+.progress-bar-fill {
+  height: 100%;
+  border-radius: 9999px;
+  background-color: var(--primary);
+  transition: width var(--transition-fast);
+}
+
+.progress-bar-fill.high-completion {
+  background-color: var(--status-completed);
+}
+
+.card-footer {
+  margin-top: 12px;
+  font-size: 12px;
+  color: var(--muted-foreground);
+}
+
+/* --------------------------------------------------------------------------
+   7. Badges
+   -------------------------------------------------------------------------- */
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  border-radius: 9999px;
+  padding: 2px 10px;
+  font-size: 12px;
+  font-weight: 500;
+  line-height: 1.5;
+  white-space: nowrap;
+}
+
+/* Health status badges */
+.health-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.health-dot {
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+}
+
+.health-active .health-dot {
+  background-color: var(--health-active);
+}
+
+.health-complete .health-dot {
+  background-color: var(--health-complete);
+}
+
+.health-stale .health-dot {
+  background-color: var(--health-stale);
+}
+
+/* Status badges — colored text + dot */
+.status-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  line-height: 1.5;
+}
+
+.status-dot {
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+/* Priority badges */
+.priority-badge {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  font-weight: 500;
+  border-radius: 6px;
+  padding: 2px 8px;
+  line-height: 1.5;
+}
+
+/* --------------------------------------------------------------------------
+   8. Status Classes
+   -------------------------------------------------------------------------- */
+.status-pending .status-dot {
+  background-color: var(--status-pending);
+}
+
+.status-pending {
+  color: var(--status-pending);
+}
+
+.status-in-progress .status-dot {
+  background-color: var(--status-in-progress);
+}
+
+.status-in-progress {
+  color: var(--status-in-progress);
+}
+
+.status-completed .status-dot {
+  background-color: var(--status-completed);
+}
+
+.status-completed {
+  color: var(--status-completed);
+}
+
+.status-blocked .status-dot {
+  background-color: var(--status-blocked);
+  animation: pulse-dot 2s infinite;
+}
+
+.status-blocked {
+  color: var(--status-blocked);
+}
+
+.status-skipped .status-dot {
+  background-color: var(--status-skipped);
+}
+
+.status-skipped {
+  color: var(--status-skipped);
+  text-decoration: line-through;
+}
+
+/* Blocked pulse animation */
+@keyframes pulse-dot {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+}
+
+/* Priority badge variants */
+.priority-p0 {
+  background-color: var(--priority-p0);
+  color: var(--priority-p0-foreground);
+}
+
+.priority-p1 {
+  background-color: var(--priority-p1);
+  color: var(--priority-p1-foreground);
+}
+
+.priority-p2 {
+  background-color: var(--priority-p2);
+  color: var(--foreground);
+  border: 1px solid var(--border);
+}
+
+/* --------------------------------------------------------------------------
+   9. Swimlane Layout
+   -------------------------------------------------------------------------- */
+.swimlane-page {
+  display: flex;
+  height: calc(100vh - var(--header-height));
+  overflow: hidden;
+}
+
+.swimlane-container {
+  flex: 1;
+  overflow-y: auto;
+  overflow-x: hidden;
+  position: relative;
+}
+
+/* Phase header row — sticky */
+.phase-headers {
+  position: sticky;
+  top: 0;
+  z-index: var(--z-swimlane);
+  display: grid;
+  height: var(--phase-header-height);
+  background-color: var(--muted);
+  border-bottom: 1px solid var(--border);
+}
+
+.phase-header {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--muted-foreground);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+/* --------------------------------------------------------------------------
+   10. Feature Rows
+   -------------------------------------------------------------------------- */
+.feature-row {
+  border-bottom: 1px solid var(--border);
+}
+
+.feature-row.hidden {
+  display: none;
+}
+
+/* Expanded feature row */
+.feature-row.expanded .feature-row-content {
+  display: block;
+}
+
+.feature-row.collapsed .feature-row-content {
+  display: none;
+}
+
+.feature-row-header {
+  display: flex;
+  align-items: center;
+  height: var(--row-header-height);
+  padding: 0 16px;
+  border-bottom: 1px solid var(--border);
+  cursor: pointer;
+}
+
+.feature-row-header .chevron {
+  margin-right: 8px;
+  transition: transform var(--transition-fast);
+}
+
+.feature-row.expanded .feature-row-header .chevron {
+  transform: rotate(0deg);
+}
+
+.feature-row.collapsed .feature-row-header .chevron {
+  transform: rotate(-90deg);
+}
+
+.feature-slug {
+  font-weight: 500;
+  font-size: 14px;
+}
+
+.completion-badge {
+  margin-left: auto;
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--muted-foreground);
+}
+
+/* Task area within a feature row */
+.feature-row-content {
+  min-height: 80px;
+  padding: 12px 16px;
+  display: grid;
+  align-items: start;
+}
+
+/* Collapsed row inline progress */
+.collapsed-progress {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin-left: 16px;
+}
+
+.collapsed-progress-bar {
+  width: 128px;
+  height: 6px;
+  border-radius: 9999px;
+  background-color: var(--secondary);
+  overflow: hidden;
+}
+
+.collapsed-progress-fill {
+  height: 100%;
+  border-radius: 9999px;
+  background-color: var(--primary);
+}
+
+.collapsed-progress-text {
+  font-size: 12px;
+  color: var(--muted-foreground);
+}
+
+/* --------------------------------------------------------------------------
+   11. Task Cards (Swimlane)
+   -------------------------------------------------------------------------- */
+.task-card {
+  background-color: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 12px;
+  min-width: 140px;
+  position: relative;
+  z-index: var(--z-task-card);
+  transition: border-color var(--transition-fast);
+  cursor: pointer;
+}
+
+.task-card:hover {
+  border-color: var(--ring);
+}
+
+.task-card.highlighted {
+  box-shadow: 0 0 0 2px var(--ring);
+  transition: box-shadow var(--transition-fast), opacity 300ms ease;
+}
+
+.task-card.highlight-fade {
+  opacity: 0;
+  transition: box-shadow var(--transition-fast), opacity 300ms ease;
+}
+
+.task-card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 6px;
+}
+
+.task-card-id {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  color: var(--muted-foreground);
+}
+
+.task-card-title {
+  font-size: 14px;
+  line-height: 1.4;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  margin-bottom: 8px;
+}
+
+.task-card-status {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+}
+
+/* --------------------------------------------------------------------------
+   12. SVG Dependency Arrows (Overlay)
+   -------------------------------------------------------------------------- */
+.svg-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: var(--z-svg-overlay);
+  pointer-events: none;
+}
+
+.edge-within {
+  stroke: var(--muted-foreground);
+  stroke-width: 1.5px;
+  fill: none;
+  marker-end: url(#arrowhead);
+}
+
+.edge-cross-feature {
+  stroke: var(--muted-foreground);
+  stroke-width: 1.5px;
+  stroke-dasharray: 6 3;
+  fill: none;
+  marker-end: url(#arrowhead-dashed);
+}
+
+.edge-blocked {
+  stroke: var(--destructive);
+  stroke-width: 1.5px;
+  fill: none;
+}
+
+/* --------------------------------------------------------------------------
+   13. Detail Panel (Slide-over)
+   -------------------------------------------------------------------------- */
+.detail-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: var(--z-overlay);
+  background-color: rgba(0, 0, 0, 0.2);
+  backdrop-filter: blur(4px);
+}
+
+.detail-panel {
+  position: fixed;
+  top: 0;
+  right: 0;
+  z-index: var(--z-detail-panel);
+  width: var(--detail-panel-width);
+  min-width: var(--detail-panel-min-width);
+  height: 100vh;
+  background-color: var(--background);
+  border-left: 1px solid var(--border);
+  display: flex;
+  flex-direction: column;
+  transform: translateX(0);
+}
+
+/* Slide-in animation */
+@media (prefers-reduced-motion: no-preference) {
+  .detail-panel {
+    animation: slide-in-right 200ms ease-out forwards;
+  }
+
+  .detail-panel.closing {
+    animation: slide-out-right 200ms ease-in forwards;
+  }
+
+  .detail-overlay {
+    animation: fade-in 200ms ease-out forwards;
+  }
+
+  .detail-overlay.closing {
+    animation: fade-out 200ms ease-in forwards;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .detail-panel {
+    opacity: 1;
+  }
+
+  .detail-overlay {
+    opacity: 1;
+  }
+}
+
+@keyframes slide-in-right {
+  from {
+    transform: translateX(100%);
+  }
+  to {
+    transform: translateX(0);
+  }
+}
+
+@keyframes slide-out-right {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(100%);
+  }
+}
+
+@keyframes fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes fade-out {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+  }
+}
+
+/* Detail panel header */
+.detail-panel-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: var(--header-height);
+  padding: 0 24px;
+  border-bottom: 1px solid var(--border);
+  flex-shrink: 0;
+}
+
+.detail-panel-close {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border-radius: 6px;
+  color: var(--muted-foreground);
+  transition: background-color var(--transition-fast), color var(--transition-fast);
+}
+
+.detail-panel-close:hover {
+  background-color: var(--secondary);
+  color: var(--foreground);
+}
+
+.detail-panel-task-id {
+  font-family: var(--font-mono);
+  font-size: 14px;
+  color: var(--muted-foreground);
+}
+
+/* Detail panel content */
+.detail-panel-content {
+  flex: 1;
+  overflow-y: auto;
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.detail-panel-title {
+  font-weight: 600;
+  font-size: 24px;
+  line-height: 1.3;
+}
+
+.detail-panel-badges {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+/* Metadata table */
+.metadata-table {
+  width: 100%;
+}
+
+.metadata-row {
+  display: flex;
+  align-items: flex-start;
+  padding: 8px 0;
+  border-bottom: 1px solid var(--border);
+}
+
+.metadata-row:last-child {
+  border-bottom: none;
+}
+
+.metadata-label {
+  width: 128px;
+  flex-shrink: 0;
+  font-size: 14px;
+  color: var(--muted-foreground);
+}
+
+.metadata-value {
+  font-size: 14px;
+  flex: 1;
+}
+
+.metadata-value.mono {
+  font-family: var(--font-mono);
+}
+
+/* Dependency links (clickable chips) */
+.dep-chip {
+  display: inline-flex;
+  align-items: center;
+  background-color: var(--secondary);
+  border-radius: 6px;
+  padding: 4px 8px;
+  font-family: var(--font-mono);
+  font-size: 14px;
+  transition: background-color var(--transition-fast);
+  cursor: pointer;
+}
+
+.dep-chip:hover {
+  background-color: var(--accent);
+}
+
+/* Acceptance criteria list */
+.criteria-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.criteria-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+/* Execution record */
+.execution-record {
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+.execution-record pre,
+.execution-record code {
+  font-family: var(--font-mono);
+}
+
+.execution-record pre {
+  background-color: var(--muted);
+  border-radius: 6px;
+  padding: 12px;
+  overflow-x: auto;
+}
+
+.no-record {
+  color: var(--muted-foreground);
+  font-size: 14px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* Loading spinner */
+.spinner {
+  display: inline-block;
+  width: 24px;
+  height: 24px;
+  border: 2px solid var(--border);
+  border-top-color: var(--foreground);
+  border-radius: 50%;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .spinner {
+    animation: spin 0.6s linear infinite;
+  }
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* --------------------------------------------------------------------------
+   14. Activity Sidebar
+   -------------------------------------------------------------------------- */
+.activity-sidebar {
+  height: calc(100vh - var(--header-height));
+  border-left: 1px solid var(--border);
+  background-color: var(--background);
+  display: flex;
+  flex-direction: column;
+  flex-shrink: 0;
+}
+
+.activity-sidebar.expanded {
+  width: var(--sidebar-expanded);
+}
+
+.activity-sidebar.collapsed {
+  width: var(--sidebar-collapsed);
+}
+
+/* Sidebar transition */
+@media (prefers-reduced-motion: no-preference) {
+  .activity-sidebar {
+    transition: width 200ms ease-out;
+  }
+}
+
+/* Sidebar header */
+.sidebar-header {
+  display: flex;
+  align-items: center;
+  height: 40px;
+  padding: 0 16px;
+  border-bottom: 1px solid var(--border);
+  flex-shrink: 0;
+}
+
+.sidebar-header-title {
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.sidebar-toggle {
+  margin-left: auto;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border-radius: 6px;
+  color: var(--muted-foreground);
+  transition: background-color var(--transition-fast), color var(--transition-fast);
+}
+
+.sidebar-toggle:hover {
+  background-color: var(--secondary);
+  color: var(--foreground);
+}
+
+/* Event list */
+.event-list {
+  flex: 1;
+  overflow-y: auto;
+}
+
+.event-item {
+  padding: 12px 16px;
+  border-bottom: 1px solid var(--border);
+  cursor: pointer;
+  transition: background-color var(--transition-fast);
+}
+
+.event-item:hover {
+  background-color: color-mix(in srgb, var(--muted) 50%, transparent);
+}
+
+.event-timestamp {
+  font-size: 12px;
+  color: var(--muted-foreground);
+  margin-bottom: 4px;
+}
+
+.event-task-id {
+  font-family: var(--font-mono);
+  font-size: 12px;
+}
+
+.event-title {
+  font-size: 14px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 260px;
+}
+
+.event-type {
+  font-size: 12px;
+  font-weight: 500;
+}
+
+.event-feature {
+  font-size: 12px;
+  color: var(--muted-foreground);
+}
+
+/* Event type status colors */
+.event-type-completed {
+  color: var(--status-completed);
+}
+
+.event-type-blocked {
+  color: var(--status-blocked);
+}
+
+.event-type-claimed {
+  color: var(--status-in-progress);
+}
+
+.event-type-skipped {
+  color: var(--status-skipped);
+}
+
+/* Collapsed sidebar */
+.sidebar-collapsed-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding-top: 16px;
+  gap: 16px;
+}
+
+.blocked-badge {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background-color: var(--destructive);
+  color: var(--destructive-foreground);
+  font-size: 14px;
+  font-weight: 700;
+}
+
+/* Empty state */
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 48px 24px;
+  text-align: center;
+}
+
+.empty-state-icon {
+  width: 48px;
+  height: 48px;
+  color: var(--muted-foreground);
+  margin-bottom: 16px;
+}
+
+.empty-state-title {
+  font-weight: 600;
+  font-size: 20px;
+  line-height: 1.35;
+  margin-bottom: 8px;
+}
+
+.empty-state-description {
+  font-size: 14px;
+  color: var(--muted-foreground);
+}
+
+/* --------------------------------------------------------------------------
+   15. Filter Controls
+   -------------------------------------------------------------------------- */
+.filter-controls {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.filter-button {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  height: 36px;
+  padding: 0 12px;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  background-color: var(--background);
+  font-size: 14px;
+  font-weight: 500;
+  transition: background-color var(--transition-fast), border-color var(--transition-fast);
+}
+
+.filter-button:hover {
+  background-color: var(--secondary);
+}
+
+.filter-badge-count {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 18px;
+  height: 18px;
+  border-radius: 9999px;
+  background-color: var(--primary);
+  color: var(--primary-foreground);
+  font-size: 11px;
+  font-weight: 500;
+  padding: 0 4px;
+}
+
+/* Filter dropdown */
+.filter-dropdown {
+  position: absolute;
+  top: 100%;
+  right: 0;
+  z-index: 50;
+  min-width: 180px;
+  background-color: var(--popover);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 4px;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+}
+
+.filter-option {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 12px;
+  border-radius: 4px;
+  font-size: 14px;
+  cursor: pointer;
+  transition: background-color var(--transition-fast);
+}
+
+.filter-option:hover {
+  background-color: var(--secondary);
+}
+
+/* --------------------------------------------------------------------------
+   16. Buttons
+   -------------------------------------------------------------------------- */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  height: 40px;
+  padding: 0 16px;
+  border-radius: 6px;
+  font-size: 14px;
+  font-weight: 500;
+  transition: background-color var(--transition-fast), color var(--transition-fast);
+}
+
+.btn-primary {
+  background-color: var(--primary);
+  color: var(--primary-foreground);
+}
+
+.btn-primary:hover {
+  opacity: 0.9;
+}
+
+.btn-outline {
+  border: 1px solid var(--border);
+  background-color: var(--background);
+  color: var(--foreground);
+}
+
+.btn-outline:hover {
+  background-color: var(--secondary);
+}
+
+.btn-ghost {
+  background: transparent;
+  color: var(--foreground);
+}
+
+.btn-ghost:hover {
+  background-color: var(--secondary);
+}
+
+.btn-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 6px;
+  transition: background-color var(--transition-fast);
+}
+
+.btn-icon:hover {
+  background-color: var(--secondary);
+}
+
+/* --------------------------------------------------------------------------
+   17. Skeleton Loading States
+   -------------------------------------------------------------------------- */
+.skeleton {
+  background-color: var(--muted);
+  border-radius: 8px;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .skeleton {
+    animation: skeleton-pulse 2s infinite;
+  }
+}
+
+@keyframes skeleton-pulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+}
+
+.skeleton-card {
+  height: 192px;
+}
+
+.skeleton-row {
+  height: 128px;
+  margin-bottom: 8px;
+}
+
+.skeleton-event {
+  height: 64px;
+  margin-bottom: 4px;
+}
+
+/* Crossfade transition utilities */
+@media (prefers-reduced-motion: no-preference) {
+  .fade-in {
+    animation: fade-in 150ms ease-out forwards;
+  }
+
+  .fade-out {
+    animation: fade-out 150ms ease-in forwards;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .fade-in,
+  .fade-out {
+    opacity: 1;
+  }
+}
+
+/* --------------------------------------------------------------------------
+   18. Row Collapse/Expand Animation
+   -------------------------------------------------------------------------- */
+@media (prefers-reduced-motion: no-preference) {
+  .feature-row-content {
+    transition: max-height 200ms ease-out, opacity 150ms ease-out;
+    overflow: hidden;
+  }
+
+  .feature-row-content.collapsing {
+    max-height: 0;
+    opacity: 0;
+  }
+
+  .activity-sidebar {
+    transition: width 200ms ease-out;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .feature-row-content {
+    transition: none;
+  }
+}
+
+/* --------------------------------------------------------------------------
+   19. Warning Banner (Error State)
+   -------------------------------------------------------------------------- */
+.warning-banner {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background-color: var(--secondary);
+  border-left: 4px solid var(--destructive);
+  border-radius: 6px;
+  padding: 12px;
+}
+
+.warning-banner-icon {
+  color: var(--destructive);
+  flex-shrink: 0;
+}
+
+.warning-banner-text {
+  font-size: 14px;
+}
+
+.warning-banner-path {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  color: var(--muted-foreground);
+}
+
+/* --------------------------------------------------------------------------
+   20. Dense Graph Simplification
+   -------------------------------------------------------------------------- */
+.dep-count-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2px 8px;
+  border-radius: 9999px;
+  background-color: var(--secondary);
+  color: var(--muted-foreground);
+  font-size: 11px;
+  font-weight: 500;
+}
+
+/* --------------------------------------------------------------------------
+   21. Error Alert (Detail Panel)
+   -------------------------------------------------------------------------- */
+.error-alert {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 12px;
+  border: 1px solid var(--destructive);
+  border-radius: 6px;
+  background-color: color-mix(in srgb, var(--destructive) 10%, transparent);
+  color: var(--destructive);
+}
+
+.error-alert-title {
+  font-weight: 500;
+  font-size: 14px;
+}
+
+.error-alert-action {
+  align-self: flex-start;
+}
+
+/* --------------------------------------------------------------------------
+   22. Section Headers (Detail Panel)
+   -------------------------------------------------------------------------- */
+.section-header {
+  font-weight: 600;
+  font-size: 20px;
+  line-height: 1.35;
+  margin-bottom: 12px;
+}
+
+/* --------------------------------------------------------------------------
+   23. Scrollbar Styling
+   -------------------------------------------------------------------------- */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background-color: var(--border);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background-color: var(--muted-foreground);
+}
+
+/* --------------------------------------------------------------------------
+   24. Responsive Breakpoints
+   -------------------------------------------------------------------------- */
+
+/* Below minimum viewport — show message */
+@media (max-width: 767px) {
+  .viewport-warning {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+    padding: 24px;
+    text-align: center;
+    font-size: 16px;
+    color: var(--muted-foreground);
+  }
+}
+
+/* 768px -- 1023px: sidebar hidden, swimlane scrollable */
+@media (min-width: 768px) and (max-width: 1023px) {
+  .activity-sidebar {
+    display: none;
+  }
+
+  .swimlane-container {
+    overflow-x: auto;
+  }
+
+  .phase-headers,
+  .feature-row-content {
+    min-width: 160px;
+  }
+}
+
+/* 1024px -- 1279px: sidebar collapsed to icon bar */
+@media (min-width: 1024px) and (max-width: 1279px) {
+  .activity-sidebar.expanded {
+    width: var(--sidebar-collapsed);
+  }
+}
+
+/* >= 1280px: full layout */
+@media (min-width: 1280px) {
+  .activity-sidebar.expanded {
+    width: var(--sidebar-expanded);
+  }
+}
+
+/* --------------------------------------------------------------------------
+   25. Theme Toggle Transition
+   -------------------------------------------------------------------------- */
+@media (prefers-reduced-motion: no-preference) {
+  body {
+    transition: background-color var(--transition-fast), color var(--transition-fast);
+  }
+
+  .card,
+  .detail-panel,
+  .activity-sidebar {
+    transition: background-color var(--transition-fast), border-color var(--transition-fast);
+  }
+}
+
+/* --------------------------------------------------------------------------
+   26. Slow Loading Message
+   -------------------------------------------------------------------------- */
+.slow-loading-message {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 14px;
+  color: var(--muted-foreground);
+  padding: 8px 0;
+}

@@ -67,8 +67,8 @@ func TestSetupRouter_ServesStaticCSS(t *testing.T) {
 	}
 
 	body := w.Body.String()
-	if !strings.Contains(body, "placeholder") {
-		t.Errorf("Expected CSS content in response, got: %s", body)
+	if !strings.Contains(body, "--status-pending") {
+		t.Errorf("Expected CSS custom properties in response, got: %s", body[:min(200, len(body))])
 	}
 }
 
