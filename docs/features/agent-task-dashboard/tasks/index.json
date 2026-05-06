@@ -338,7 +338,7 @@
       "dependencies": [
         "T-test-2"
       ],
-      "status": "pending",
+      "status": "blocked",
       "file": "run-e2e-tests.md",
       "record": "records/run-e2e-tests.md",
       "scope": "all"

@@ -1,30 +1,21 @@
 {
-  "taskId": "T-test-2",
-  "status": "completed",
-  "summary": "Generated TypeScript e2e test scripts from test cases. Created ui.spec.ts (27 tests covering TC-001 to TC-027: landing page, swimlane view, detail panel, activity sidebar, integration) and api.spec.ts (11 tests covering TC-028 to TC-038: all API endpoints and error responses). Set up shared infrastructure: helpers.ts, package.json, tsconfig.json, playwright.config.ts, config.yaml. All files pass TypeScript compilation (tsc --noEmit). No unresolved VERIFY markers. All 38 traceability comments present.",
+  "taskId": "T-test-3",
+  "status": "blocked",
+  "summary": "Executed e2e test suite for agent-task-dashboard. 35/38 tests passed, 3 timed out (TC-013, TC-014, TC-022). All 11 API tests passed. 24/27 UI tests passed. Failures are test script issues, not application bugs: TC-013/TC-014 filter dropdowns auto-close after checkbox selection making cleanup uncheck fail; TC-022 detail overlay intercepts clicks on subsequent task cards in iteration loop.",
   "filesCreated": [
-    "tests/e2e/helpers.ts",
-    "tests/e2e/package.json",
-    "tests/e2e/tsconfig.json",
-    "tests/e2e/playwright.config.ts",
-    "tests/e2e/config.yaml",
-    "tests/e2e/features/agent-task-dashboard/ui.spec.ts",
-    "tests/e2e/features/agent-task-dashboard/api.spec.ts"
+    "tests/e2e/features/agent-task-dashboard/results/latest.md"
   ],
   "filesModified": [],
   "keyDecisions": [
-    "Used locators derived from HTML templates and JS source code instead of sitemap.json (not generated yet)",
-    "All tests classified as public-test (no auth required by the dashboard)",
-    "config.yaml points both baseUrl and apiBaseUrl to localhost:8080 (same server serves pages and API)",
-    "API tests derive project IDs dynamically by first calling GET /api/projects rather than hardcoding"
+    "Used go run ./cmd/task-dashboard/ -config .task-dashboard-test.yaml to start the server (Justfile 'run' recipe points to wrong path)",
+    "Created .task-dashboard-test.yaml with single project pointing at repo root for test data"
   ],
-  "testsPassed": 0,
-  "testsFailed": 0,
+  "testsPassed": 35,
+  "testsFailed": 3,
   "coverage": -1.0,
   "acceptanceCriteria": [
-    { "criterion": "tests/e2e/features/agent-task-dashboard/ contains at least one spec file (ui.spec.ts / api.spec.ts)", "met": true },
-    { "criterion": "tests/e2e/helpers.ts exists (shared infrastructure)", "met": true },
-    { "criterion": "Each test() includes traceability comment // Traceability: TC-NNN", "met": true }
+    { "criterion": "tests/e2e/features/agent-task-dashboard/results/latest.md exists", "met": true },
+    { "criterion": "All tests pass (status = PASS in latest.md)", "met": false }
   ],
-  "notes": "This is a test generation task, not implementation. Go tests pass at 88.8% coverage. TypeScript compilation verified with tsc --noEmit. No CLI spec generated (0 CLI test cases)."
+  "notes": "3 test failures require fix tasks: TC-013 and TC-014 have filter dropdown auto-close issue in cleanup step; TC-022 has overlay interception issue in task card iteration loop. These are test script defects, not application bugs. The filter and dependency navigation features themselves work correctly."
 }

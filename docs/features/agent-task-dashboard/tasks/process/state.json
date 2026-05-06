@@ -1,14 +1,14 @@
 {
-  "task_id": "T-test-2",
-  "key": "gen-test-scripts",
-  "title": "Generate e2e Test Scripts",
+  "task_id": "T-test-3",
+  "key": "run-e2e-tests",
+  "title": "Run e2e Tests",
   "priority": "P1",
-  "estimatedTime": "1-2h",
+  "estimatedTime": "30min-1h",
   "dependencies": [
-    "T-test-1"
+    "T-test-2"
   ],
-  "file": "gen-test-scripts.md",
-  "record": "records/gen-test-scripts.md",
-  "startedTime": "2026-05-07 02:44",
+  "file": "run-e2e-tests.md",
+  "record": "records/run-e2e-tests.md",
+  "startedTime": "2026-05-07 02:53",
   "scope": "all"
 }
