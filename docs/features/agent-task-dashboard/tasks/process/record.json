@@ -1,18 +1,26 @@
 {
-  "taskId": "T-test-4.5",
+  "taskId": "T-test-5",
   "status": "completed",
-  "summary": "Ran full e2e regression suite (just test-e2e without --feature flag). All 38 tests passed: 11 API tests and 27 UI tests across the agent-task-dashboard feature. No failures, no regressions detected.",
-  "filesCreated": [],
+  "summary": "Extracted business rules and technical specifications from PRD, tech design, and API handbook into specs/ directory. All 20 items classified as LOCAL (single-feature project, no cross-cutting candidates). Early exit per skill workflow; preview files written for traceability.",
+  "filesCreated": [
+    "docs/features/agent-task-dashboard/specs/biz-specs.md",
+    "docs/features/agent-task-dashboard/specs/tech-specs.md",
+    "docs/features/agent-task-dashboard/specs/.integrated"
+  ],
   "filesModified": [],
   "keyDecisions": [
-    "Verification-only task: no code changes needed, only regression test execution"
+    "All 8 business rules classified as LOCAL since agent-task-dashboard is the only feature in this project",
+    "All 12 technical specs classified as LOCAL for the same reason",
+    "Early exit triggered: no CROSS items means no integration to project-level dirs needed",
+    "No review-choices.md created because no CROSS items exist"
   ],
-  "testsPassed": 38,
+  "testsPassed": 0,
   "testsFailed": 0,
   "coverage": -1.0,
   "acceptanceCriteria": [
-    { "criterion": "just test-e2e passes (full suite, no --feature flag)", "met": true },
-    { "criterion": "All graduated and existing specs pass", "met": true }
+    { "criterion": "docs/features/agent-task-dashboard/specs/biz-specs.md exists with extracted business rules", "met": true },
+    { "criterion": "docs/features/agent-task-dashboard/specs/tech-specs.md exists with extracted technical specs", "met": true },
+    { "criterion": "If any [CROSS] items exist: docs/features/agent-task-dashboard/specs/review-choices.md exists", "met": true }
   ],
-  "notes": "All 38 e2e tests passed in 24.6s. The test suite includes 11 API spec tests (TC-028 through TC-038) and 27 UI spec tests (TC-001 through TC-027). No graduated marker exists yet (.graduated/ directory is empty), but all feature tests pass cleanly."
+  "notes": "Early exit: all items LOCAL, no CROSS items. review-choices.md not required since no integration needed. .integrated marker written with 'skipped: all local' status."
 }

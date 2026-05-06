@@ -1,14 +1,14 @@
 {
-  "task_id": "T-test-4.5",
-  "key": "verify-regression",
-  "title": "Verify Full E2E Regression",
-  "priority": "P1",
-  "estimatedTime": "15-30min",
+  "task_id": "T-test-5",
+  "key": "consolidate-specs",
+  "title": "Consolidate Specs",
+  "priority": "P2",
+  "estimatedTime": "20min",
   "dependencies": [
-    "T-test-4"
+    "T-test-4.5"
   ],
-  "file": "verify-regression.md",
-  "record": "records/verify-regression.md",
-  "startedTime": "2026-05-07 03:10",
+  "file": "consolidate-specs.md",
+  "record": "records/consolidate-specs.md",
+  "startedTime": "2026-05-07 03:12",
   "scope": "all"
 }
