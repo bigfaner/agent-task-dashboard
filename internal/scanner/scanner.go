@@ -35,6 +35,16 @@ func NewScanner(cfg *config.Config) *Scanner {
 	}
 }
 
+// NewScannerWithFS creates a scanner with a custom fs.FS for testing.
+// The provided filesystem is used directly (no dirFSWrapper).
+func NewScannerWithFS(cfg *config.Config, fsys fs.FS) *Scanner {
+	return &Scanner{
+		config: cfg,
+		fs:     fsys,
+		cache:  make(map[string]*model.ProjectData),
+	}
+}
+
 // dirFSWrapper wraps an fs.FS to mark it as an os.DirFS production filesystem.
 type dirFSWrapper struct {
 	fs.FS
