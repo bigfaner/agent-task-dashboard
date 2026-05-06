@@ -1,14 +1,14 @@
 {
-  "task_id": "T-test-3",
-  "key": "run-e2e-tests",
-  "title": "Run e2e Tests",
+  "task_id": "T-test-4",
+  "key": "graduate-tests",
+  "title": "Graduate Test Scripts",
   "priority": "P1",
-  "estimatedTime": "30min-1h",
+  "estimatedTime": "30min",
   "dependencies": [
-    "T-test-2"
+    "T-test-3"
   ],
-  "file": "run-e2e-tests.md",
-  "record": "records/run-e2e-tests.md",
-  "startedTime": "2026-05-07 02:53",
+  "file": "graduate-tests.md",
+  "record": "records/graduate-tests.md",
+  "startedTime": "2026-05-07 03:04",
   "scope": "all"
 }

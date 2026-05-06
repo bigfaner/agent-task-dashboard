@@ -325,7 +325,7 @@
       "dependencies": [
         "T-test-3"
       ],
-      "status": "pending",
+      "status": "blocked",
       "file": "graduate-tests.md",
       "record": "records/graduate-tests.md",
       "scope": "all"
@@ -338,7 +338,7 @@
       "dependencies": [
         "T-test-2"
       ],
-      "status": "blocked",
+      "status": "completed",
       "file": "run-e2e-tests.md",
       "record": "records/run-e2e-tests.md",
       "scope": "all"

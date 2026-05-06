@@ -1,21 +1,20 @@
 {
-  "taskId": "T-test-3",
+  "taskId": "T-test-4",
   "status": "blocked",
-  "summary": "Executed e2e test suite for agent-task-dashboard. 35/38 tests passed, 3 timed out (TC-013, TC-014, TC-022). All 11 API tests passed. 24/27 UI tests passed. Failures are test script issues, not application bugs: TC-013/TC-014 filter dropdowns auto-close after checkbox selection making cleanup uncheck fail; TC-022 detail overlay intercepts clicks on subsequent task cards in iteration loop.",
-  "filesCreated": [
-    "tests/e2e/features/agent-task-dashboard/results/latest.md"
-  ],
+  "summary": "Could not graduate test scripts because e2e results show FAIL (3/38 tests timed out). The /graduate-tests skill requires status=PASS before migration. Failures are in TC-013, TC-014 (filter dropdown auto-close during cleanup), and TC-022 (detail overlay intercepts clicks). These are test script bugs, not application failures. Task blocked until e2e tests are fixed and re-run with PASS result.",
+  "filesCreated": [],
   "filesModified": [],
   "keyDecisions": [
-    "Used go run ./cmd/task-dashboard/ -config .task-dashboard-test.yaml to start the server (Justfile 'run' recipe points to wrong path)",
-    "Created .task-dashboard-test.yaml with single project pointing at repo root for test data"
+    "Blocked task per implementation notes: 'Verify e2e passed before graduating. If still failing, mark blocked.'",
+    "3 failures are test script cleanup/navigation issues, not application defects - filter assertions and dependency navigation actually work"
   ],
-  "testsPassed": 35,
-  "testsFailed": 3,
+  "testsPassed": 0,
+  "testsFailed": 0,
   "coverage": -1.0,
   "acceptanceCriteria": [
-    { "criterion": "tests/e2e/features/agent-task-dashboard/results/latest.md exists", "met": true },
-    { "criterion": "All tests pass (status = PASS in latest.md)", "met": false }
+    { "criterion": "tests/e2e/features/agent-task-dashboard/results/latest.md shows status = PASS", "met": false },
+    { "criterion": "tests/e2e/.graduated/agent-task-dashboard marker exists", "met": false },
+    { "criterion": "Spec files present in tests/e2e/<module>/", "met": false }
   ],
-  "notes": "3 test failures require fix tasks: TC-013 and TC-014 have filter dropdown auto-close issue in cleanup step; TC-022 has overlay interception issue in task card iteration loop. These are test script defects, not application bugs. The filter and dependency navigation features themselves work correctly."
+  "notes": "Prerequisite not met: e2e results show FAIL. Need fix tasks for TC-013, TC-014, TC-022 test scripts before graduation can proceed. All 11 API tests pass; 24/27 UI tests pass."
 }
