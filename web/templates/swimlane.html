@@ -8,33 +8,83 @@
     <link rel="stylesheet" href="/static/css/styles.css">
 </head>
 <body>
-    <header>
-        <h1>{{.ProjectName}}</h1>
-        <nav>
-            <a href="/">All Projects</a>
-        </nav>
-    </header>
-    <main>
-        <div id="swimlane-container" class="swimlane-container">
-            <!-- SVG container for DAG rendering -->
-            <svg id="dag-svg" class="dag-svg"></svg>
+    <!-- Header bar -->
+    <header class="header">
+        <div class="breadcrumb">
+            <a href="/">Dashboard</a>
+            <span class="breadcrumb-separator">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
+            </span>
+            <span class="breadcrumb-current">{{.ProjectName}}</span>
         </div>
-
-        <!-- Detail panel placeholder (slide-over) -->
-        <div id="detail-panel" class="detail-panel" style="display:none;">
-            <div class="detail-panel-content">
-                <button id="close-panel" class="close-btn">&times;</button>
-                <div id="detail-panel-body"></div>
+        <div class="header-actions">
+            <!-- Status filter -->
+            <div style="position:relative;">
+                <button class="filter-button" id="status-filter-btn">
+                    Status
+                    <span class="filter-badge-count" style="display:none;">0</span>
+                </button>
+                <div class="filter-dropdown" id="status-filter-dropdown" style="display:none;">
+                    <label class="filter-option"><input type="checkbox" name="statusFilter" value="pending"> Pending</label>
+                    <label class="filter-option"><input type="checkbox" name="statusFilter" value="in_progress"> In Progress</label>
+                    <label class="filter-option"><input type="checkbox" name="statusFilter" value="completed"> Completed</label>
+                    <label class="filter-option"><input type="checkbox" name="statusFilter" value="blocked"> Blocked</label>
+                    <label class="filter-option"><input type="checkbox" name="statusFilter" value="skipped"> Skipped</label>
+                </div>
+            </div>
+            <!-- Priority filter -->
+            <div style="position:relative;">
+                <button class="filter-button" id="priority-filter-btn">
+                    Priority
+                    <span class="filter-badge-count" style="display:none;">0</span>
+                </button>
+                <div class="filter-dropdown" id="priority-filter-dropdown" style="display:none;">
+                    <label class="filter-option"><input type="checkbox" name="priorityFilter" value="P0"> P0</label>
+                    <label class="filter-option"><input type="checkbox" name="priorityFilter" value="P1"> P1</label>
+                    <label class="filter-option"><input type="checkbox" name="priorityFilter" value="P2"> P2</label>
+                </div>
             </div>
         </div>
+    </header>
 
-        <!-- Activity sidebar placeholder -->
-        <aside id="activity-sidebar" class="activity-sidebar">
-            <h2>Recent Activity</h2>
-            <ul id="activity-list" class="activity-list"></ul>
+    <!-- Main layout -->
+    <div class="swimlane-page">
+        <!-- Swimlane area -->
+        <div class="swimlane-container" id="swimlane-container">
+            <!-- Dynamically rendered by swimlane.js -->
+        </div>
+
+        <!-- Activity sidebar placeholder (populated by activity.js) -->
+        <aside id="activity-sidebar" class="activity-sidebar expanded">
+            <div class="sidebar-header">
+                <span class="sidebar-header-title">Activity</span>
+                <button class="sidebar-toggle" id="sidebar-toggle-btn" aria-label="Collapse sidebar">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"/></svg>
+                </button>
+            </div>
+            <div class="event-list" id="event-list">
+                <!-- Populated by activity.js -->
+            </div>
         </aside>
-    </main>
+    </div>
 
+    <!-- Detail panel overlay (UF-3) -->
+    <div class="detail-overlay" id="detail-overlay" style="display:none;"></div>
+
+    <!-- Detail panel (UF-3) -->
+    <div class="detail-panel" id="detail-panel" style="display:none;" tabindex="-1" role="dialog" aria-modal="true">
+        <div class="detail-panel-header">
+            <button class="detail-panel-close" id="detail-panel-close" aria-label="Close task details">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+            </button>
+            <span class="detail-panel-task-id" id="detail-panel-task-id"></span>
+        </div>
+        <div class="detail-panel-content" id="detail-panel-content">
+            <!-- Populated by detail-panel.js -->
+        </div>
+    </div>
+
+    <!-- Initial data for JS -->
     <script id="__INITIAL_DATA__" type="application/json">{"projectId":"{{.ProjectID}}","projectName":"{{.ProjectName}}","features":{{.Features | toJson}}}</script>
     <script src="/static/js/dagre.min.js"></script>
     <script src="/static/js/swimlane.js"></script>

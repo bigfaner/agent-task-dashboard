@@ -1,15 +1,16 @@
 {
-  "task_id": "2.gate",
-  "key": "2-gate",
-  "title": "Phase 2 Exit Gate",
+  "task_id": "3.3",
+  "key": "3.3-swimlane-dag",
+  "title": "Swimlane DAG Renderer",
   "priority": "P0",
-  "estimatedTime": "1h",
+  "estimatedTime": "4h",
   "dependencies": [
-    "2.summary"
+    "2.gate",
+    "3.1"
   ],
-  "file": "2-gate.md",
-  "record": "records/2-gate.md",
-  "startedTime": "2026-05-07 01:50",
+  "file": "3.3-swimlane-dag.md",
+  "record": "records/3.3-swimlane-dag.md",
+  "startedTime": "2026-05-07 02:00",
   "breaking": true,
   "scope": "all"
 }

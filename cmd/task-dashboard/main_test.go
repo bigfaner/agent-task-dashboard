@@ -327,6 +327,268 @@ func TestEmbeddedAssetsExist(t *testing.T) {
 	}
 }
 
+func TestSetupRouter_ServesSwimlaneJS(t *testing.T) {
+	cfgPath, _ := createTestConfig(t)
+	cfg, err := config.Load(cfgPath)
+	if err != nil {
+		t.Fatalf("Failed to load config: %v", err)
+	}
+	s := scanner.NewScanner(cfg)
+	r := setupRouter(s, cfg)
+
+	req := httptest.NewRequest(http.MethodGet, "/static/js/swimlane.js", nil)
+	w := httptest.NewRecorder()
+	r.ServeHTTP(w, req)
+
+	if w.Code != http.StatusOK {
+		t.Errorf("Expected status 200 for /static/js/swimlane.js, got %d", w.Code)
+	}
+
+	body := w.Body.String()
+	// Verify key swimlane functions and patterns exist
+	checks := []string{
+		"renderPage",
+		"renderFeatureRow",
+		"renderTaskCard",
+		"renderDependencyArrows",
+		"renderArrow",
+		"applyFilters",
+		"toggleRow",
+		"sortFeatures",
+		"highlightTaskCard",
+		"__INITIAL_DATA__",
+		"edge-cross-feature",
+		"edge-within",
+		"edge-blocked",
+		"status-",
+		"priority-",
+	}
+	for _, check := range checks {
+		if !strings.Contains(body, check) {
+			t.Errorf("Expected swimlane.js to contain %q", check)
+		}
+	}
+}
+
+func TestSetupRouter_ServesDagreWithContent(t *testing.T) {
+	cfgPath, _ := createTestConfig(t)
+	cfg, err := config.Load(cfgPath)
+	if err != nil {
+		t.Fatalf("Failed to load config: %v", err)
+	}
+	s := scanner.NewScanner(cfg)
+	r := setupRouter(s, cfg)
+
+	req := httptest.NewRequest(http.MethodGet, "/static/js/dagre.min.js", nil)
+	w := httptest.NewRecorder()
+	r.ServeHTTP(w, req)
+
+	if w.Code != http.StatusOK {
+		t.Errorf("Expected status 200 for /static/js/dagre.min.js, got %d", w.Code)
+	}
+
+	body := w.Body.String()
+	if len(body) < 1000 {
+		t.Errorf("dagre.min.js seems too small (%d bytes), expected a real dagre library", len(body))
+	}
+}
+
+func TestSwimlaneTemplateContainsFilterControls(t *testing.T) {
+	tmplContent, err := fs.ReadFile(web.Assets, "templates/swimlane.html")
+	if err != nil {
+		t.Fatalf("Failed to read swimlane.html: %v", err)
+	}
+	body := string(tmplContent)
+
+	checks := []string{
+		"status-filter-btn",
+		"priority-filter-btn",
+		"statusFilter",
+		"priorityFilter",
+		"swimlane-container",
+		"detail-panel",
+		"activity-sidebar",
+		"__INITIAL_DATA__",
+		"swimlane.js",
+		"dagre.min.js",
+		"detail-panel.js",
+		"activity.js",
+	}
+	for _, check := range checks {
+		if !strings.Contains(body, check) {
+			t.Errorf("Expected swimlane.html to contain %q", check)
+		}
+	}
+}
+
+func TestSwimlaneTemplateRendersForProject(t *testing.T) {
+	cfgPath, projectDir := createTestConfig(t)
+	cfg, err := config.Load(cfgPath)
+	if err != nil {
+		t.Fatalf("Failed to load config: %v", err)
+	}
+
+	// Create a feature with tasks in the test project
+	taskDir := filepath.Join(projectDir, "docs/features/test-feature/tasks")
+	featureDir := filepath.Join(projectDir, "docs/features/test-feature")
+	if err := os.MkdirAll(taskDir, 0o755); err != nil {
+		t.Fatal(err)
+	}
+
+	// Write index.json with tasks (tasks is a map keyed by task key)
+	indexJSON := `{
+		"feature": "test-feature",
+		"status": "in-progress",
+		"tasks": {
+			"1.1-setup": {"id": "1.1", "key": "1.1-setup", "title": "Set up project", "status": "completed", "priority": "P0", "phase": 1, "dependencies": []},
+			"2.1-scanner": {"id": "2.1", "key": "2.1-scanner", "title": "Build scanner", "status": "in_progress", "priority": "P0", "phase": 2, "dependencies": ["1.1"]},
+			"3.1-renderer": {"id": "3.1", "key": "3.1-renderer", "title": "Swimlane renderer", "status": "blocked", "priority": "P0", "phase": 3, "dependencies": ["2.1"]}
+		}
+	}`
+	if err := os.WriteFile(filepath.Join(featureDir, "tasks/index.json"), []byte(indexJSON), 0o644); err != nil {
+		t.Fatal(err)
+	}
+
+	s := scanner.NewScanner(cfg)
+	r := setupRouter(s, cfg)
+
+	req := httptest.NewRequest(http.MethodGet, "/projects/test-project", nil)
+	w := httptest.NewRecorder()
+	r.ServeHTTP(w, req)
+
+	if w.Code != http.StatusOK {
+		t.Fatalf("Expected status 200 for project page, got %d", w.Code)
+	}
+
+	body := w.Body.String()
+	if !strings.Contains(body, "test-project") {
+		t.Error("Expected project name in rendered page")
+	}
+	if !strings.Contains(body, "__INITIAL_DATA__") {
+		t.Error("Expected __INITIAL_DATA__ script in rendered page")
+	}
+	if !strings.Contains(body, "swimlane.js") {
+		t.Error("Expected swimlane.js script reference")
+	}
+	if !strings.Contains(body, "status-filter-btn") {
+		t.Error("Expected status filter button in rendered page")
+	}
+	if !strings.Contains(body, "priority-filter-btn") {
+		t.Error("Expected priority filter button in rendered page")
+	}
+}
+
+func TestSwimlaneJSContainsAllPhaseColumns(t *testing.T) {
+	jsContent, err := fs.ReadFile(web.Assets, "static/js/swimlane.js")
+	if err != nil {
+		t.Fatalf("Failed to read swimlane.js: %v", err)
+	}
+	body := string(jsContent)
+
+	phases := []string{"Phase 1", "Phase 2", "Phase 3+", "Testing", "Other"}
+	for _, phase := range phases {
+		if !strings.Contains(body, phase) {
+			t.Errorf("Expected swimlane.js to contain phase column %q", phase)
+		}
+	}
+}
+
+func TestSwimlaneJSContainsStatusHandling(t *testing.T) {
+	jsContent, err := fs.ReadFile(web.Assets, "static/js/swimlane.js")
+	if err != nil {
+		t.Fatalf("Failed to read swimlane.js: %v", err)
+	}
+	body := string(jsContent)
+
+	// The JS references statuses for status class generation (status.replace('_', '-'))
+	// and for filter values
+	statusChecks := []struct {
+		value   string
+		context string
+	}{
+		{"pending", "status filter option"},
+		{"completed", "status filter option"},
+		{"blocked", "status filter and hasBlockedTasks check"},
+	}
+	for _, check := range statusChecks {
+		if !strings.Contains(body, check.value) {
+			t.Errorf("Expected swimlane.js to reference status %q (%s)", check.value, check.context)
+		}
+	}
+
+	// Check that the JS generates status CSS classes via replace('_', '-')
+	if !strings.Contains(body, "status-") {
+		t.Error("Expected swimlane.js to generate status- CSS class prefix")
+	}
+	if !strings.Contains(body, ".replace") {
+		t.Error("Expected swimlane.js to use .replace for status class name normalization")
+	}
+}
+
+func TestSwimlaneJSContainsPriorityHandling(t *testing.T) {
+	jsContent, err := fs.ReadFile(web.Assets, "static/js/swimlane.js")
+	if err != nil {
+		t.Fatalf("Failed to read swimlane.js: %v", err)
+	}
+	body := string(jsContent)
+
+	// JS uses task.priority and toLowerCase() to build priority-p0/p1/p2 classes
+	if !strings.Contains(body, "priority-") {
+		t.Error("Expected swimlane.js to generate priority- CSS class prefix")
+	}
+	if !strings.Contains(body, "toLowerCase") {
+		t.Error("Expected swimlane.js to use toLowerCase() for priority class generation")
+	}
+}
+
+func TestSwimlaneJSContainsArrowMarkers(t *testing.T) {
+	jsContent, err := fs.ReadFile(web.Assets, "static/js/swimlane.js")
+	if err != nil {
+		t.Fatalf("Failed to read swimlane.js: %v", err)
+	}
+	body := string(jsContent)
+
+	if !strings.Contains(body, "arrowhead") {
+		t.Error("Expected swimlane.js to define arrowhead SVG marker")
+	}
+	if !strings.Contains(body, "arrowhead-dashed") {
+		t.Error("Expected swimlane.js to define dashed arrowhead marker")
+	}
+	if !strings.Contains(body, "edge-cross-feature") {
+		t.Error("Expected swimlane.js to use edge-cross-feature class for dashed arrows")
+	}
+}
+
+func TestSwimlaneJSTruncatesTitle(t *testing.T) {
+	jsContent, err := fs.ReadFile(web.Assets, "static/js/swimlane.js")
+	if err != nil {
+		t.Fatalf("Failed to read swimlane.js: %v", err)
+	}
+	body := string(jsContent)
+
+	if !strings.Contains(body, "truncateTitle") {
+		t.Error("Expected swimlane.js to contain truncateTitle function")
+	}
+	if !strings.Contains(body, "30") {
+		t.Error("Expected swimlane.js to reference title truncation length of 30")
+	}
+}
+
+func TestSwimlaneJSExposesGlobalFunctions(t *testing.T) {
+	jsContent, err := fs.ReadFile(web.Assets, "static/js/swimlane.js")
+	if err != nil {
+		t.Fatalf("Failed to read swimlane.js: %v", err)
+	}
+	body := string(jsContent)
+
+	if !strings.Contains(body, "window.highlightTaskCard") {
+		t.Error("Expected swimlane.js to expose window.highlightTaskCard")
+	}
+	if !strings.Contains(body, "window.openDetailPanel") {
+		t.Error("Expected swimlane.js to reference window.openDetailPanel for detail panel integration")
+	}
+}
+
 func TestSetupRouter_SetsGinReleaseMode(t *testing.T) {
 	// Reset gin mode after test
 	defer gin.SetMode(gin.DebugMode)
