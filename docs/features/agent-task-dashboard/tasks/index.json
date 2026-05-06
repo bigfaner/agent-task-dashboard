@@ -160,7 +160,7 @@
       "dependencies": [
         "1.gate"
       ],
-      "status": "pending",
+      "status": "completed",
       "file": "2.3-page-handlers.md",
       "record": "records/2.3-page-handlers.md",
       "scope": "all"

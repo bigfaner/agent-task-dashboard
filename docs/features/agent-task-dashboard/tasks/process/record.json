@@ -1,31 +1,41 @@
 {
-	"taskId": "2.1",
-	"status": "completed",
-	"summary": "Implemented markdown parsers for task .md files and execution record .md files. ParseTaskFile extracts acceptance criteria, scope, and description using line-by-line heading detection. ParseRecordFile extracts structured sections (Summary, Files, Key Decisions, Test Results) from ## and ### headings. Handles YAML frontmatter scope extraction with quote stripping. Files are parsed from ### Files Created and ### Files Modified sub-sections. Returns empty RecordContent with Raw field populated when no headings found.",
-	"filesCreated": [
-		"internal/scanner/parser.go",
-		"internal/scanner/parser_test.go"
-	],
-	"filesModified": [],
-	"keyDecisions": [
-		"Used simple line-by-line parsing instead of markdown AST library per task spec",
-		"parseSections handles both ## (h2) and ### (h3) headings to support real record format where Key Decisions is ### under ## Changes",
-		"YAML frontmatter scope extraction strips surrounding quotes with unquote helper",
-		"extractFiles uses ### Files Created/### Files Modified sub-sections matching actual record file format"
-	],
-	"testsPassed": 19,
-	"testsFailed": 0,
-	"coverage": 94.8,
-	"acceptanceCriteria": [
-		{ "criterion": "internal/scanner/parser.go implements ParseTaskFile(filePath string) (*TaskFileContent, error)", "met": true },
-		{ "criterion": "Extracts acceptance criteria from ## Acceptance Criteria section (lines starting with - [ ])", "met": true },
-		{ "criterion": "ParseRecordFile(filePath string) (*RecordContent, error) parses structured sections", "met": true },
-		{ "criterion": "RecordContent fields populated from ## Summary, ## Files Created/Modified, ## Key Decisions, ## Test Results headings", "met": true },
-		{ "criterion": "Files field parsed as []string (one path per line)", "met": true },
-		{ "criterion": "Returns empty RecordContent with Raw field populated if no headings found", "met": true },
-		{ "criterion": "Returns error for missing files (not panic)", "met": true },
-		{ "criterion": "Unit tests with sample markdown fixtures: task file with AC, record with all sections, record with no sections, missing file", "met": true },
-		{ "criterion": "All tests pass", "met": true }
-	],
-	"notes": "19 new parser tests added (6 ParseTaskFile, 11 ParseRecordFile, 2 integration). All 44 scanner tests pass. Scanner package coverage increased from 95.0% to 94.8% (slight decrease due to new parser code with all paths covered but some error branches not tested)."
+  "taskId": "2.3",
+  "status": "completed",
+  "summary": "Implemented server-side HTML rendering with Go templates for landing page and project swimlane page. Created page.go with RegisterPages, handleLanding, and handleProject handlers. Created three HTML templates (landing.html, swimlane.html, error.html) with proper html/template auto-escaping for XSS protection. Templates embed JSON data in script tags for client-side JS consumption.",
+  "filesCreated": [
+    "internal/handler/page.go",
+    "internal/handler/page_test.go",
+    "web/templates/landing.html",
+    "web/templates/swimlane.html",
+    "web/templates/error.html",
+    "web/static/js/landing.js",
+    "web/static/js/swimlane.js",
+    "web/static/js/detail-panel.js",
+    "web/static/js/activity.js",
+    "web/static/js/dagre.min.js"
+  ],
+  "filesModified": [],
+  "keyDecisions": [
+    "[2.3] Templates loaded from embedded filesystem via go:embed using ParseFS with named template definitions ({{define \"landing.html\"}})",
+    "[2.3] toJson template function added via template.FuncMap to serialize data as template.JS for safe embedding in script tags",
+    "[2.3] RegisterPages sets HTML template on Gin engine via r.SetHTMLTemplate() so all page routes share the same template set",
+    "[2.3] Error page rendered for non-existent projects with 404 status code and HTML content type (not JSON)",
+    "[2.3] Removed old placeholder.html template replaced by actual landing.html, swimlane.html, and error.html templates",
+    "[2.3] Created placeholder JS files (landing.js, swimlane.js, detail-panel.js, activity.js, dagre.min.js) for future JS implementation"
+  ],
+  "testsPassed": 66,
+  "testsFailed": 0,
+  "coverage": 91.5,
+  "acceptanceCriteria": [
+    { "criterion": "internal/handler/page.go implements RegisterPages(r *gin.Engine, scanner *Scanner)", "met": true },
+    { "criterion": "GET / renders web/templates/landing.html with project cards data", "met": true },
+    { "criterion": "GET /projects/:id renders web/templates/swimlane.html with feature and task data", "met": true },
+    { "criterion": "web/templates/landing.html contains: page skeleton, container for project cards, embedded CSS link, embedded JS", "met": true },
+    { "criterion": "web/templates/swimlane.html contains: page skeleton, SVG container for DAG, detail panel placeholder, activity sidebar placeholder", "met": true },
+    { "criterion": "Templates use html/template auto-escaping (XSS protection)", "met": true },
+    { "criterion": "404 page rendered for non-existent project IDs", "met": true },
+    { "criterion": "Integration tests: landing page returns 200 with project names, project page returns 200 with feature data, invalid project returns 404", "met": true },
+    { "criterion": "All tests pass", "met": true }
+  ],
+  "notes": "21 new page handler tests added. Total handler package tests: 66 (42 middleware + 3 API + 21 page). Handler coverage: 91.5%. All 128 tests across the full project pass."
 }

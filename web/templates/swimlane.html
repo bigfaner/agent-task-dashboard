@@ -1,0 +1,45 @@
+{{define "swimlane.html"}}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{.Title}}</title>
+    <link rel="stylesheet" href="/static/css/styles.css">
+</head>
+<body>
+    <header>
+        <h1>{{.ProjectName}}</h1>
+        <nav>
+            <a href="/">All Projects</a>
+        </nav>
+    </header>
+    <main>
+        <div id="swimlane-container" class="swimlane-container">
+            <!-- SVG container for DAG rendering -->
+            <svg id="dag-svg" class="dag-svg"></svg>
+        </div>
+
+        <!-- Detail panel placeholder (slide-over) -->
+        <div id="detail-panel" class="detail-panel" style="display:none;">
+            <div class="detail-panel-content">
+                <button id="close-panel" class="close-btn">&times;</button>
+                <div id="detail-panel-body"></div>
+            </div>
+        </div>
+
+        <!-- Activity sidebar placeholder -->
+        <aside id="activity-sidebar" class="activity-sidebar">
+            <h2>Recent Activity</h2>
+            <ul id="activity-list" class="activity-list"></ul>
+        </aside>
+    </main>
+
+    <script id="__INITIAL_DATA__" type="application/json">{"projectId":"{{.ProjectID}}","projectName":"{{.ProjectName}}","features":{{.Features | toJson}}}</script>
+    <script src="/static/js/dagre.min.js"></script>
+    <script src="/static/js/swimlane.js"></script>
+    <script src="/static/js/detail-panel.js"></script>
+    <script src="/static/js/activity.js"></script>
+</body>
+</html>
+{{end}}

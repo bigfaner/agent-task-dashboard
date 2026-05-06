@@ -1,0 +1,14 @@
+{
+  "task_id": "2.3",
+  "key": "2.3-page-handlers",
+  "title": "Page Handlers and HTML Templates",
+  "priority": "P0",
+  "estimatedTime": "2h",
+  "dependencies": [
+    "1.gate"
+  ],
+  "file": "2.3-page-handlers.md",
+  "record": "records/2.3-page-handlers.md",
+  "startedTime": "2026-05-07 01:33",
+  "scope": "all"
+}
