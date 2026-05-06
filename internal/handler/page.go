@@ -4,9 +4,11 @@ import (
 	"encoding/json"
 	"html/template"
 	"net/http"
+	"sort"
 	"time"
 
 	"github.com/gin-gonic/gin"
+	"github.com/panda/agent-task-center/internal/model"
 	"github.com/panda/agent-task-center/internal/scanner"
 	"github.com/panda/agent-task-center/web"
 )
@@ -123,13 +125,87 @@ func handleProject(s *scanner.Scanner) gin.HandlerFunc {
 			features = []featureInfo{}
 		}
 
+		// Derive activity events from tasks across all features
+		activityEvents := deriveActivityEvents(pd.Features)
+		blockedCount := countBlockedTasks(pd.Features)
+
 		c.HTML(http.StatusOK, "swimlane.html", gin.H{
-			"ProjectID":   pd.ID,
-			"ProjectName": pd.Name,
-			"Features":    features,
-			"Title":       pd.Name + " - Swimlane View",
+			"ProjectID":      pd.ID,
+			"ProjectName":    pd.Name,
+			"Features":       features,
+			"ActivityEvents": activityEvents,
+			"BlockedCount":   blockedCount,
+			"Title":          pd.Name + " - Swimlane View",
 		})
 	}
+}
+
+// statusToEventType maps task statuses to activity event types.
+func statusToEventType(status string) string {
+	switch status {
+	case "in_progress":
+		return "claimed"
+	case "completed":
+		return "completed"
+	case "blocked":
+		return "blocked"
+	case "skipped":
+		return "skipped"
+	default:
+		return ""
+	}
+}
+
+// deriveActivityEvents creates a sorted list of activity events from all features' tasks.
+// Events are derived from non-pending tasks. The timestamp comes from the feature's
+// LastUpdated (index.json mtime). Events are sorted by timestamp descending,
+// then by feature slug alphabetically for equal timestamps. Maximum 50 events.
+func deriveActivityEvents(features []model.FeatureData) []model.ActivityEvent {
+	events := make([]model.ActivityEvent, 0)
+
+	for _, f := range features {
+		for _, t := range f.Tasks {
+			eventType := statusToEventType(t.Status)
+			if eventType == "" {
+				continue // skip pending tasks
+			}
+			events = append(events, model.ActivityEvent{
+				Timestamp: f.LastUpdated,
+				TaskID:    t.ID,
+				TaskTitle: t.Title,
+				Feature:   f.Slug,
+				EventType: eventType,
+			})
+		}
+	}
+
+	// Sort: by timestamp descending, then by feature slug ascending
+	sort.SliceStable(events, func(i, j int) bool {
+		if !events[i].Timestamp.Equal(events[j].Timestamp) {
+			return events[i].Timestamp.After(events[j].Timestamp)
+		}
+		return events[i].Feature < events[j].Feature
+	})
+
+	// Limit to 50
+	if len(events) > 50 {
+		events = events[:50]
+	}
+
+	return events
+}
+
+// countBlockedTasks counts the total number of blocked tasks across all features.
+func countBlockedTasks(features []model.FeatureData) int {
+	count := 0
+	for _, f := range features {
+		for _, t := range f.Tasks {
+			if t.Status == "blocked" {
+				count++
+			}
+		}
+	}
+	return count
 }
 
 // renderErrorPage renders an error page with the given status code and message.

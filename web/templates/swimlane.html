@@ -85,7 +85,7 @@
     </div>
 
     <!-- Initial data for JS -->
-    <script id="__INITIAL_DATA__" type="application/json">{"projectId":"{{.ProjectID}}","projectName":"{{.ProjectName}}","features":{{.Features | toJson}}}</script>
+    <script id="__INITIAL_DATA__" type="application/json">{"projectId":"{{.ProjectID}}","projectName":"{{.ProjectName}}","features":{{.Features | toJson}},"activityEvents":{{.ActivityEvents | toJson}},"blockedCount":{{.BlockedCount}}}</script>
     <script src="/static/js/dagre.min.js"></script>
     <script src="/static/js/swimlane.js"></script>
     <script src="/static/js/detail-panel.js"></script>

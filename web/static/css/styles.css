@@ -1128,6 +1128,64 @@ img {
   color: var(--status-skipped);
 }
 
+/* Activity empty state */
+.activity-empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 48px 24px;
+  text-align: center;
+}
+
+.activity-empty-icon {
+  width: 32px;
+  height: 32px;
+  color: var(--muted-foreground);
+  margin-bottom: 12px;
+}
+
+.activity-empty-text {
+  font-size: 14px;
+  color: var(--muted-foreground);
+}
+
+/* Event task line (status dot + ID + title on one row) */
+.event-task-line {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 2px;
+}
+
+.event-task-line .event-title {
+  font-size: 14px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 200px;
+}
+
+/* Collapsed sidebar expand button */
+.sidebar-toggle-expand {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border-radius: 6px;
+  color: var(--muted-foreground);
+  transition: background-color var(--transition-fast), color var(--transition-fast);
+  cursor: pointer;
+  border: none;
+  background: none;
+}
+
+.sidebar-toggle-expand:hover {
+  background-color: var(--secondary);
+  color: var(--foreground);
+}
+
 /* Collapsed sidebar */
 .sidebar-collapsed-content {
   display: flex;
