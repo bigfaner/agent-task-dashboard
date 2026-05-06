@@ -1,14 +1,15 @@
 {
-  "task_id": "3.summary",
-  "key": "3-summary",
-  "title": "Phase 3 Summary",
+  "task_id": "3.gate",
+  "key": "3-gate",
+  "title": "Phase 3 Exit Gate",
   "priority": "P0",
-  "estimatedTime": "15min",
+  "estimatedTime": "1h",
   "dependencies": [
-    "3.x"
+    "3.summary"
   ],
-  "file": "3-summary.md",
-  "record": "records/3-summary.md",
-  "startedTime": "2026-05-07 02:33",
+  "file": "3-gate.md",
+  "record": "records/3-gate.md",
+  "startedTime": "2026-05-07 02:35",
+  "breaking": true,
   "scope": "all"
 }
