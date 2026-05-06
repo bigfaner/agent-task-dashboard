@@ -1,20 +1,21 @@
 {
-  "taskId": "T-test-4",
-  "status": "blocked",
-  "summary": "Could not graduate test scripts because e2e results show FAIL (3/38 tests timed out). The /graduate-tests skill requires status=PASS before migration. Failures are in TC-013, TC-014 (filter dropdown auto-close during cleanup), and TC-022 (detail overlay intercepts clicks). These are test script bugs, not application failures. Task blocked until e2e tests are fixed and re-run with PASS result.",
+  "taskId": "disc-1",
+  "status": "completed",
+  "summary": "Fixed 3 e2e test timeouts: TC-013/TC-014 reopen filter dropdown before unchecking checkbox in cleanup step; TC-022 close detail panel overlay via Escape between task card iterations to prevent pointer event interception. All 38 e2e tests now pass (was 35/38).",
   "filesCreated": [],
-  "filesModified": [],
+  "filesModified": ["tests/e2e/features/agent-task-dashboard/ui.spec.ts"],
   "keyDecisions": [
-    "Blocked task per implementation notes: 'Verify e2e passed before graduating. If still failing, mark blocked.'",
-    "3 failures are test script cleanup/navigation issues, not application defects - filter assertions and dependency navigation actually work"
+    "TC-013/TC-014: Re-open dropdown before uncheck rather than removing cleanup, to keep the test exercising the full filter lifecycle",
+    "TC-022: Use Escape key to close panel between iterations rather than force-click, to match real user behavior"
   ],
-  "testsPassed": 0,
+  "testsPassed": 38,
   "testsFailed": 0,
   "coverage": -1.0,
   "acceptanceCriteria": [
-    { "criterion": "tests/e2e/features/agent-task-dashboard/results/latest.md shows status = PASS", "met": false },
-    { "criterion": "tests/e2e/.graduated/agent-task-dashboard marker exists", "met": false },
-    { "criterion": "Spec files present in tests/e2e/<module>/", "met": false }
+    { "criterion": "TC-013 filter by status test passes without timeout", "met": true },
+    { "criterion": "TC-014 filter by priority test passes without timeout", "met": true },
+    { "criterion": "TC-022 dependency links navigation test passes without timeout", "met": true },
+    { "criterion": "All 38 e2e tests pass", "met": true }
   ],
-  "notes": "Prerequisite not met: e2e results show FAIL. Need fix tasks for TC-013, TC-014, TC-022 test scripts before graduation can proceed. All 11 API tests pass; 24/27 UI tests pass."
+  "notes": "Root causes were UI behavior not test script bugs: (1) filter dropdowns auto-close after checkbox interaction, (2) detail panel overlay intercepts pointer events on underlying elements."
 }

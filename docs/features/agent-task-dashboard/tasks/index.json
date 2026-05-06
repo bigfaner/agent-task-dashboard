@@ -296,7 +296,7 @@
       "title": "Fix e2e: TC-013/014 filter dropdown + TC-022 overlay interception",
       "priority": "P0",
       "estimatedTime": "30min",
-      "status": "in_progress",
+      "status": "completed",
       "file": "disc-1.md",
       "record": "records/disc-1.md",
       "breaking": true,
