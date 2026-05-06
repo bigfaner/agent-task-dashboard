@@ -1,14 +1,15 @@
 {
-  "task_id": "2.summary",
-  "key": "2-summary",
-  "title": "Phase 2 Summary",
+  "task_id": "2.gate",
+  "key": "2-gate",
+  "title": "Phase 2 Exit Gate",
   "priority": "P0",
-  "estimatedTime": "15min",
+  "estimatedTime": "1h",
   "dependencies": [
-    "2.x"
+    "2.summary"
   ],
-  "file": "2-summary.md",
-  "record": "records/2-summary.md",
-  "startedTime": "2026-05-07 01:47",
+  "file": "2-gate.md",
+  "record": "records/2-gate.md",
+  "startedTime": "2026-05-07 01:50",
+  "breaking": true,
   "scope": "all"
 }
